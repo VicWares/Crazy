@@ -2,18 +2,23 @@ package org.wintrisstech;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import javax.swing.*;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 /****************************************
  * Crazy Working selenium demo
+ * version 220618
  ****************************************/
 public class Main
 {
-    private static String version = "220616";
+    private static String version = "220618";
     public static String weekNumber;
     private XSSFWorkbook sportDataWorkbook;
     private HashMap<String, String> weekNumberMap = new HashMap<>();
@@ -27,21 +32,23 @@ public class Main
     private Elements consensusElements;
     private int globalMatchupIndex = 3;
     private Elements oddsElements;
+    private WebDriver driver;
+    String url = "https://www.covers.com/sport/football/nfl/odds";
+
     public static void main(String[] args) throws IOException
     {
         System.out.println("Hello World!");
         System.setProperty("webdriver.chrome.driver", "/Users/vicwintriss/Downloads/chromedriver");
-        WebDriver driver = new ChromeDriver();
-        driver.manage().window().maximize();
-        driver.get("http://facebook.com");
-        System.out.println(driver.getTitle());
-        driver.quit();
+
         Main main = new Main();
         main.getGoing();//To get out of static context
     }
     private void getGoing() throws IOException
     {
         System.out.println("GetGoing()");
+        driver = new ChromeDriver();
+        driver.manage().window().maximize();
+        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
         fillCityNameMap();
         fillWeekNumberMap();
         String weekNumber = JOptionPane.showInputDialog("Enter NFL week number");
@@ -55,6 +62,14 @@ public class Main
         System.out.println(xRefMap);
         dataCollector.collectTeamInfo(weekElements);
         sportDataWorkbook = excelReader.readSportData();
+        driver.get(url);
+        List<WebElement> elements = driver.findElements(By.cssSelector("#__spreadTotalDiv-nfl-265276 > table > tbody > tr:nth-child(2) > td:nth-child(9)"));
+        {
+            for (WebElement e : elements)
+            {
+                System.out.println(e.getText());
+            }
+        }
         for (Map.Entry<String, String> entry : xRefMap.entrySet())
         {
             String dataEventId = entry.getKey();
@@ -82,6 +97,7 @@ public class Main
         excelWriter.openOutputStream();
         excelWriter.writeSportData(sportDataWorkbook);
         excelWriter.closeOutputStream();
+        driver.quit();
         System.out.println("Proper Finish...HOORAY!");
     }
     public HashMap<String, String> buildXref(org.jsoup.select.Elements weekElements)
