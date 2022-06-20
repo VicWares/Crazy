@@ -55,7 +55,8 @@ public class ExcelBuilder
     public XSSFWorkbook buildExcel(XSSFWorkbook sportDataWorkbook, String dataEventID, int eventIndex, String gameIdentifier)
     {
         sportDataSheet = sportDataWorkbook.getSheet("Data");
-        String time = LocalDate.now() + " " + LocalTime.now().getHour() + ":" + LocalTime.now().getMinute();
+        //String time = LocalDate.now() + " " + LocalTime.now().getHour() + ":" + LocalTime.now().getMinute();
+        String time = "45678";
         CellStyle leftStyle = sportDataWorkbook.createCellStyle();
         leftStyle.setAlignment(LEFT);
         CellStyle centerStyle = sportDataWorkbook.createCellStyle();

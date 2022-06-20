@@ -12,6 +12,9 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.awt.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 public class ExcelBuilder
 {
@@ -49,12 +52,13 @@ public class ExcelBuilder
     private HashMap<String, String> awaySpreadOddsMap = new HashMap<>();
     public XSSFWorkbook buildExcel(XSSFWorkbook sportDataWorkbook, String dataEventID, int eventIndex, String gameIdentifier)
     {
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        Date date = new Date();
+        String time = (dateFormat.format(date));
+        System.out.println(time);
         sportDataSheet = sportDataWorkbook.getSheet("Data");
-        String time = "12345";
         CellStyle leftStyle = sportDataWorkbook.createCellStyle();
-        //leftStyle.setAlignment(HorizontalAlignment.LEFT);
         CellStyle centerStyle = sportDataWorkbook.createCellStyle();
-        //centerStyle.setAlignment(HorizontalAlignment.CENTER);
         CellStyle myStyle = sportDataWorkbook.createCellStyle();
         XSSFCellStyle redStyle = sportDataWorkbook.createCellStyle();
         redStyle.setFillForegroundColor(IndexedColors.RED.getIndex());
