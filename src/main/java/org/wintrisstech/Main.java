@@ -14,11 +14,11 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 /****************************************
  * Crazy Working selenium demo
- * version crazy2 220619
+ * version crazy2 220620
  ****************************************/
 public class Main
 {
-    private static String version = "220619";
+    private static String version = "220620";
     public static String weekNumber;
     private XSSFWorkbook sportDataWorkbook;
     private HashMap<String, String> weekNumberMap = new HashMap<>();
@@ -61,11 +61,13 @@ public class Main
         dataCollector.collectTeamInfo(weekElements);
         sportDataWorkbook = excelReader.readSportData();
         driver.get(url);
-        List<WebElement> elements = driver.findElements(By.cssSelector("#__spreadTotalDiv-nfl-265276 > table > tbody > tr:nth-child(2) > td:nth-child(9)"));
+        driver.findElement(By.cssSelector("html.js.no-touch.cssanimations.csstransitions body.is-cookie-banner div#CookieBanner.is-visible-cookie-banner div#CookieBannerNotice div.cookiebanner__main div.cookiebanner__main__inner div.cookiebanner__buttons ul li button#CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll.cookiebanner__buttons__accept")).click();
+        System.out.println("Main65 Click on Accept AllCookies");
+        List<WebElement> elements = driver.findElements(By.cssSelector("#__spreadTotalDiv-nfl-265276 > table > tbody > tr:nth-child(2) > td:nth-child(9)"));//Bet365 odds
         {
             for (WebElement e : elements)
             {
-                System.out.println(e.getText());
+                System.out.println("row 2, bet365 => " + e.getText());
             }
         }
         for (Map.Entry<String, String> entry : xRefMap.entrySet())

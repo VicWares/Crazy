@@ -2,7 +2,7 @@ package org.wintrisstech;
 /*******************************************************************
  * Covers NFL Extraction Tool
  * Copyright 2020 Dan Farris
- * version crazy2 220619
+ * version crazy2 220620
  * Builds data event id array and calendar date array
  *******************************************************************/
 import org.jsoup.nodes.Element;
@@ -124,7 +124,7 @@ public class DataCollector
         }
         catch (Exception e)
         {
-            System.out.println("DC127 DataCollector, no consensus data for " + gameIdentifier);
+            System.out.println("DC127 DataCollector, no consensus data");
         }
         ouOversMap.put(thisMatchupID, ouOver);
         ouUndersMap.put(thisMatchupID, ouUnder);
