@@ -14,11 +14,11 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 /****************************************
  * Crazy Working selenium demo
- * version 220618
+ * version crazy2 220619
  ****************************************/
 public class Main
 {
-    private static String version = "220618";
+    private static String version = "220619";
     public static String weekNumber;
     private XSSFWorkbook sportDataWorkbook;
     private HashMap<String, String> weekNumberMap = new HashMap<>();
@@ -37,9 +37,8 @@ public class Main
 
     public static void main(String[] args) throws IOException
     {
-        System.out.println("Hello World!");
+        System.out.println("Main40 Starting main()");
         System.setProperty("webdriver.chrome.driver", "/Users/vicwintriss/Downloads/chromedriver");
-
         Main main = new Main();
         main.getGoing();//To get out of static context
     }
@@ -51,7 +50,7 @@ public class Main
         fillCityNameMap();
         fillWeekNumberMap();
         String weekNumber = JOptionPane.showInputDialog("Enter NFL week number");
-        weekNumber = "17";
+        weekNumber = "1";
         String weekDate = weekNumberMap.get(weekNumber);
         org.jsoup.select.Elements nflElements = webSiteReader.readCleanWebsite("https://www.covers.com/sports/nfl/matchups?selectedDate=" + weekDate);
         org.jsoup.select.Elements weekElements = nflElements.select(".cmg_game_data, .cmg_matchup_game_box");
@@ -74,10 +73,7 @@ public class Main
             String dataEventId = entry.getKey();
             String dataGame = xRefMap.get(dataEventId);
             System.out.println("Main64 " + dataEventId + " " + xRefMap.get(dataEventId) + " " + dataCollector.getGameDatesMap().get(dataEventId) + " " + dataCollector.getAwayFullNameMap().get(dataEventId) + " vs " + dataCollector.getHomeFullNameMap().get(dataEventId));
-            Elements moneyLineOddsElements = oddsElements.select("[data-game*=" + dataGame + "]:nth-child(9)");
-            System.out.println("....." + moneyLineOddsElements.text());
-            String moneyLineOdds = dataCollector.collectMoneylineOdds(moneyLineOddsElements, xRefMap, dataEventId);
-            excelBuilder.setMoneyLineOdds(moneyLineOdds, dataEventId);
+            System.out.println(".....");
             consensusElements = webSiteReader.readCleanWebsite("https://contests.covers.com/consensus/matchupconsensusdetails?externalId=%2fsport%2ffootball%2fcompetition%3a" + dataEventId);
             dataCollector.collectConsensusData(consensusElements, dataEventId);
             excelBuilder.setThisWeekAwayTeamsMap(dataCollector.getAwayFullNameMap());
@@ -156,25 +152,25 @@ public class Main
     }
     private void fillWeekNumberMap()
     {
-        weekNumberMap.put("1", "2021-09-09");//Season start...Week 1
-        weekNumberMap.put("2", "2021-09-16");
-        weekNumberMap.put("3", "2021-09-23");
-        weekNumberMap.put("4", "2021-09-30");
-        weekNumberMap.put("5", "2021-10-07");
-        weekNumberMap.put("6", "2021-10-14");
-        weekNumberMap.put("7", "2021-10-21");
-        weekNumberMap.put("8", "2021-10-28");
-        weekNumberMap.put("9", "2021-11-04");
-        weekNumberMap.put("10", "2021-11-11");
-        weekNumberMap.put("11", "2021-11-18");
-        weekNumberMap.put("12", "2021-11-25");
-        weekNumberMap.put("13", "2021-12-02");
-        weekNumberMap.put("14", "2021-12-09");
-        weekNumberMap.put("15", "2021-12-16");
-        weekNumberMap.put("16", "2021-12-23");
-        weekNumberMap.put("17", "2022-01-02");
-        weekNumberMap.put("18", "2022-01-09");
-        weekNumberMap.put("19", "2022-02-06");
+        weekNumberMap.put("1", "2022-09-08");//Season start...Week 1
+        weekNumberMap.put("2", "2022-09-15");
+        weekNumberMap.put("3", "2022-09-22");
+        weekNumberMap.put("4", "2022-09-29");
+        weekNumberMap.put("5", "2022-10-06");
+        weekNumberMap.put("6", "2022-10-13");
+        weekNumberMap.put("7", "2022-10-20");
+        weekNumberMap.put("8", "2022-10-27");
+        weekNumberMap.put("9", "2022-11-03");
+        weekNumberMap.put("10", "2022-11-10");
+        weekNumberMap.put("11", "2022-11-17");
+        weekNumberMap.put("12", "2022-11-24");
+        weekNumberMap.put("13", "2022-12-01");
+        weekNumberMap.put("14", "2022-12-08");
+        weekNumberMap.put("15", "2022-12-15");
+        weekNumberMap.put("16", "2022-12-22");
+        weekNumberMap.put("17", "2022-12-29");
+        weekNumberMap.put("18", "2023-01-08");
+        weekNumberMap.put("19", "2023-02-05");
     }
 }
 ///*******************************************************************

@@ -2,7 +2,7 @@ package org.wintrisstech;
 /*******************************************************************
  * Covers NFL Extraction Tool
  * Copyright 2020 Dan Farris
- * version 220618
+ * version crazy2 220619
  * Builds data event id array and calendar date array
  *******************************************************************/
 import org.jsoup.nodes.Element;
@@ -47,7 +47,7 @@ public class DataCollector
     private String awayTeamCity;
     private String homeTeamCity;
     private String thisWeek;
-    private String thisSeason = "2021";
+    private String thisSeason = "2022";
     private ArrayList<String> thisWeekGameDates = new ArrayList<String>();
     private ArrayList<String> thisGameWeekNumbers = new ArrayList<String>();
     private ArrayList<String> thisWeekHomeTeamScores = new ArrayList<String>();
@@ -124,7 +124,7 @@ public class DataCollector
         }
         catch (Exception e)
         {
-            System.out.println("DC121 DataCollector, no consensus data for " + gameIdentifier);
+            System.out.println("DC127 DataCollector, no consensus data for " + gameIdentifier);
         }
         ouOversMap.put(thisMatchupID, ouOver);
         ouUndersMap.put(thisMatchupID, ouUnder);

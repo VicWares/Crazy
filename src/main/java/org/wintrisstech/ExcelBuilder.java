@@ -2,7 +2,7 @@ package org.wintrisstech;
 /*******************************************************************
  * Covers NFL Extraction Tool
  * Copyright 2020 Dan Farris
- * version 220618
+ * version crazy2 220619
  *******************************************************************/
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.IndexedColors;
@@ -55,7 +55,6 @@ public class ExcelBuilder
         DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         Date date = new Date();
         String time = (dateFormat.format(date));
-        System.out.println(time);
         sportDataSheet = sportDataWorkbook.getSheet("Data");
         CellStyle leftStyle = sportDataWorkbook.createCellStyle();
         CellStyle centerStyle = sportDataWorkbook.createCellStyle();
