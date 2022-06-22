@@ -6,19 +6,23 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
 import javax.swing.*;
 import java.io.IOException;
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 /****************************************
  * Crazy Working selenium demo
- * version crazy2 220620
+ * version crazy2 220621
  ****************************************/
 public class Main
 {
-    private static String version = "220620";
+    private static String version = "220621";
     public static String weekNumber;
     private XSSFWorkbook sportDataWorkbook;
     private HashMap<String, String> weekNumberMap = new HashMap<>();
@@ -33,16 +37,15 @@ public class Main
     private int globalMatchupIndex = 3;
     private Elements oddsElements;
     private WebDriver driver;
-    String url = "https://www.covers.com/sport/football/nfl/odds";
 
-    public static void main(String[] args) throws IOException
+    public static void main(String[] args) throws IOException, InterruptedException
     {
         System.out.println("Main40 Starting main()");
         System.setProperty("webdriver.chrome.driver", "/Users/vicwintriss/Downloads/chromedriver");
         Main main = new Main();
         main.getGoing();//To get out of static context
     }
-    private void getGoing() throws IOException
+    private void getGoing() throws IOException, InterruptedException
     {
         System.out.println("GetGoing()");
         driver = new ChromeDriver();
@@ -60,10 +63,19 @@ public class Main
         System.out.println(xRefMap);
         dataCollector.collectTeamInfo(weekElements);
         sportDataWorkbook = excelReader.readSportData();
-        driver.get(url);
+        driver.get("https://www.covers.com/sport/football/nfl/odds");
         driver.findElement(By.cssSelector("html.js.no-touch.cssanimations.csstransitions body.is-cookie-banner div#CookieBanner.is-visible-cookie-banner div#CookieBannerNotice div.cookiebanner__main div.cookiebanner__main__inner div.cookiebanner__buttons ul li button#CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll.cookiebanner__buttons__accept")).click();
-        System.out.println("Main65 Click on Accept AllCookies");
-        List<WebElement> elements = driver.findElements(By.cssSelector("#__spreadTotalDiv-nfl-265276 > table > tbody > tr:nth-child(2) > td:nth-child(9)"));//Bet365 odds
+        System.out.println("Main64 Clicked on Accepted AllCookies");
+        driver.findElement(By.cssSelector("#__betMenu")).click();
+        System.out.println("Main70 clicked on id=__betMenu");
+        Duration duration = Duration.ofSeconds(30);
+        WebDriverWait wait = new WebDriverWait(driver, duration);
+        WebElement element = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("li.active > a:nth-child(1)")));
+        element.click();
+        System.out.println("Main66 clicked on Moneyline");
+        System.out.println("........." + element.getText());
+        Thread.sleep(1000);
+        List<WebElement> elements = driver.findElements(By.cssSelector("#__spreadTotalDiv-nfl-265276 > table > tbody > tr:nth-child(2) > td:nth-child(9)"));//Mpneylne/Bet365 odds
         {
             for (WebElement e : elements)
             {
@@ -154,25 +166,44 @@ public class Main
     }
     private void fillWeekNumberMap()
     {
-        weekNumberMap.put("1", "2022-09-08");//Season start...Week 1
-        weekNumberMap.put("2", "2022-09-15");
-        weekNumberMap.put("3", "2022-09-22");
-        weekNumberMap.put("4", "2022-09-29");
-        weekNumberMap.put("5", "2022-10-06");
-        weekNumberMap.put("6", "2022-10-13");
-        weekNumberMap.put("7", "2022-10-20");
-        weekNumberMap.put("8", "2022-10-27");
-        weekNumberMap.put("9", "2022-11-03");
-        weekNumberMap.put("10", "2022-11-10");
-        weekNumberMap.put("11", "2022-11-17");
-        weekNumberMap.put("12", "2022-11-24");
-        weekNumberMap.put("13", "2022-12-01");
-        weekNumberMap.put("14", "2022-12-08");
-        weekNumberMap.put("15", "2022-12-15");
-        weekNumberMap.put("16", "2022-12-22");
-        weekNumberMap.put("17", "2022-12-29");
-        weekNumberMap.put("18", "2023-01-08");
-        weekNumberMap.put("19", "2023-02-05");
+        weekNumberMap.put("1", "2021-09-09");//Season start...Week 1
+        weekNumberMap.put("2", "2021-09-16");
+        weekNumberMap.put("3", "2021-09-23");
+        weekNumberMap.put("4", "2021-09-30");
+        weekNumberMap.put("5", "2021-10-07");
+        weekNumberMap.put("6", "2021-10-14");
+        weekNumberMap.put("7", "2021-10-21");
+        weekNumberMap.put("8", "2021-10-28");
+        weekNumberMap.put("9", "2021-11-04");
+        weekNumberMap.put("10", "2021-11-11");
+        weekNumberMap.put("11", "2021-11-18");
+        weekNumberMap.put("12", "2021-11-25");
+        weekNumberMap.put("13", "2021-12-02");
+        weekNumberMap.put("14", "2021-12-09");
+        weekNumberMap.put("15", "2021-12-16");
+        weekNumberMap.put("16", "2021-12-23");
+        weekNumberMap.put("17", "2022-01-02");
+        weekNumberMap.put("18", "2022-01-09");
+        weekNumberMap.put("19", "2022-02-06");
+//        weekNumberMap.put("1", "2022-09-08");//Season start...Week 1
+//        weekNumberMap.put("2", "2022-09-15");
+//        weekNumberMap.put("3", "2022-09-22");
+//        weekNumberMap.put("4", "2022-09-29");
+//        weekNumberMap.put("5", "2022-10-06");
+//        weekNumberMap.put("6", "2022-10-13");
+//        weekNumberMap.put("7", "2022-10-20");
+//        weekNumberMap.put("8", "2022-10-27");
+//        weekNumberMap.put("9", "2022-11-03");
+//        weekNumberMap.put("10", "2022-11-10");
+//        weekNumberMap.put("11", "2022-11-17");
+//        weekNumberMap.put("12", "2022-11-24");
+//        weekNumberMap.put("13", "2022-12-01");
+//        weekNumberMap.put("14", "2022-12-08");
+//        weekNumberMap.put("15", "2022-12-15");
+//        weekNumberMap.put("16", "2022-12-22");
+//        weekNumberMap.put("17", "2022-12-29");
+//        weekNumberMap.put("18", "2023-01-08");
+//        weekNumberMap.put("19", "2023-02-05");
     }
 }
 ///*******************************************************************
