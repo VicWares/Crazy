@@ -18,7 +18,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 /****************************************
  * Crazy Working selenium demo
- * version crazy2 220621
+ * version crazy2 220622
  ****************************************/
 public class Main
 {
@@ -64,24 +64,32 @@ public class Main
         dataCollector.collectTeamInfo(weekElements);
         sportDataWorkbook = excelReader.readSportData();
         driver.get("https://www.covers.com/sport/football/nfl/odds");
+        //Click on Accept All Cookies
         driver.findElement(By.cssSelector("html.js.no-touch.cssanimations.csstransitions body.is-cookie-banner div#CookieBanner.is-visible-cookie-banner div#CookieBannerNotice div.cookiebanner__main div.cookiebanner__main__inner div.cookiebanner__buttons ul li button#CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll.cookiebanner__buttons__accept")).click();
         System.out.println("Main64 Clicked on Accepted AllCookies");
-        driver.findElement(By.cssSelector("#__betMenu")).click();
-        System.out.println("Main70 clicked on id=__betMenu");
-        Duration duration = Duration.ofSeconds(30);
-        WebDriverWait wait = new WebDriverWait(driver, duration);
-        WebElement element = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("li.active > a:nth-child(1)")));
-        element.click();
-        System.out.println("Main66 clicked on Moneyline");
-        System.out.println("........." + element.getText());
-        Thread.sleep(1000);
-        List<WebElement> elements = driver.findElements(By.cssSelector("#__spreadTotalDiv-nfl-265276 > table > tbody > tr:nth-child(2) > td:nth-child(9)"));//Mpneylne/Bet365 odds
-        {
-            for (WebElement e : elements)
-            {
-                System.out.println("row 2, bet365 => " + e.getText());
-            }
-        }
+        System.out.println("Starting 10 second wait after accepting cookies");
+        Thread.sleep(10000);
+        System.out.println("Ending 10 second wait after accepting cookies");
+        //Click on bet menu
+        driver.findElement(By.cssSelector("#__betMenu")).click();//Bet Menu
+        System.out.println("Main70 clicked on bet Menu");
+        System.out.println("Starting 10 second wait after bet Menu");
+        Thread.sleep(10000);
+        System.out.println("Ending 10 second wait after accepting cookies");
+        //Click on Moneyline
+        driver.findElement(By.cssSelector("#BetTypeDropdown > li:nth-child(2) > a")).click();//Moneyline
+        System.out.println("Main76 clicked on Moneyline");
+        System.out.println("Starting 10 second wait after clicking on moneyline");
+        Thread.sleep(10000);
+        System.out.println("Ending 10 second wait after accepting cookies");
+        //Get bet365
+        WebElement we = driver.findElement(By.cssSelector("#__moneylineDiv-nfl-265276 > table > tbody > tr:nth-child(3) > td:nth-child(9) > div > div.__awayOdds > div.American.__american"));
+        System.out.println("bet365(1) => " + we.getText());
+        WebElement we2 = driver.findElement(By.cssSelector("#__moneylineDiv-nfl-265276 > table > tbody > tr:nth-child(6) > td:nth-child(9) > div > div.__homeOdds > div.American.__american"));
+        System.out.println("bet365(2) => " + we2.getText());
+        WebElement we3 = driver.findElement(By.cssSelector("#__moneylineDiv-nfl-265276 > table > tbody > tr:nth-child(9) > td:nth-child(9) > div > div.__awayOdds > div.American.__american"));
+        System.out.println("bet365(3) => " + we3.getText());
+
         for (Map.Entry<String, String> entry : xRefMap.entrySet())
         {
             String dataEventId = entry.getKey();
