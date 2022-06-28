@@ -6,14 +6,12 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 import javax.swing.*;
 import java.io.IOException;
-import java.time.Duration;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 /****************************************
@@ -37,17 +35,16 @@ public class Main
     private int globalMatchupIndex = 3;
     private Elements oddsElements;
     private WebDriver driver;
-
     public static void main(String[] args) throws IOException, InterruptedException
     {
-        System.out.println("Main40 Starting main()");
+        System.out.println("Main38 Main40 Starting main()");
         System.setProperty("webdriver.chrome.driver", "/Users/vicwintriss/Downloads/chromedriver");
         Main main = new Main();
         main.getGoing();//To get out of static context
     }
     private void getGoing() throws IOException, InterruptedException
     {
-        System.out.println("GetGoing()");
+        System.out.println("Main45 GetGoing()");
         driver = new ChromeDriver();
         driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
         fillCityNameMap();
@@ -55,41 +52,45 @@ public class Main
         String weekNumber = JOptionPane.showInputDialog("Enter NFL week number");
         weekNumber = "1";
         String weekDate = weekNumberMap.get(weekNumber);
-        System.out.println(">>>>>>>>>>>>>>>>>>>>> weekDate: " + weekDate);
+        System.out.println("Main53 >>>>>>>>>>>>>>>>>>>>> weekDate: " + weekDate);
         org.jsoup.select.Elements nflElements = webSiteReader.readCleanWebsite("https://www.covers.com/sports/nfl/matchups?selectedDate=" + weekDate);
         org.jsoup.select.Elements weekElements = nflElements.select(".cmg_game_data, .cmg_matchup_game_box");
         xRefMap = buildXref(weekElements);
         System.out.println(xRefMap);
-        System.out.println("Main56 week number => " + weekNumber + ", week date => " + weekDate + ", " + weekElements.size() + " games this week");
+        System.out.println("Main58 week number => " + weekNumber + ", week date => " + weekDate + ", " + weekElements.size() + " games this week");
         dataCollector.collectTeamInfo(weekElements);
         sportDataWorkbook = excelReader.readSportData();
         driver.get("https://www.covers.com/sport/football/nfl/odds");//Get current year odds & betting lines
-        //Click on bet menu
-        driver.findElement(By.cssSelector("#__betMenu")).click();//Bet Menu
-        System.out.println("Main75 clicked on bet Menu");
-        System.out.println("Starting 5 second wait after bet Menu");
-        Thread.sleep(5000);
-        System.out.println("Ending 5 second wait after bet menu");
-        //Click on Moneyline
-        driver.findElement(By.cssSelector("#BetTypeDropdown > li:nth-child(2) > a")).click();//Moneyline
-        System.out.println("Main81 clicked on Moneyline");
-        System.out.println("Starting 5 second wait after clicking on moneyline");
-        Thread.sleep(5000);
-        System.out.println("Ending 5 second wait after moneyline");
-        //Get bet365
-        WebElement we = driver.findElement(By.cssSelector("#__moneylineDiv-nfl-265276 > table:nth-child(2) > tbody:nth-child(3) > tr:nth-child(3) > td:nth-child(9) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1)"));
-        System.out.println("bet365(1) => " + we.getText());
-        WebElement we2 = driver.findElement(By.cssSelector("#__moneylineDiv-nfl-265276 > table:nth-child(2) > tbody:nth-child(3) > tr:nth-child(3) > td:nth-child(9) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1)"));
-        System.out.println("bet365(2) => " + we2.getText());
-//        WebElement we3 = driver.findElement(By.cssSelector("#__moneylineDiv-nfl-244234 > table > tbody > tr:nth-child(3) > td:nth-child(9) > div > div.__awayOdds > div.American.__american"));
-//        System.out.println("bet365(3) => " + we3.getText());
-
+        /////////////Click on bet menu
+        WebElement bm = driver.findElement(By.cssSelector("#__betMenu"));//Bet Menu
+        bm.click();
+        System.out.println("Main69 Starting 1 second wait after bet Menu click");
+        Thread.sleep(1000);
+        System.out.println("Main71 Ending 1 second wait after bet menu");
+        //////////Click on Moneyline
+        WebElement ml = driver.findElement(By.cssSelector("[data-value=moneyline]"));//Moneyline
+        ml.click();
+        System.out.println("Main75 clicked on Moneyline");
+        System.out.println("Main76 Starting 1 second wait after clicking on moneyline");
+        Thread.sleep(1000);
+        System.out.println("Main78 Ending 1 second wait after moneyline");
+        String data2Game = "265283";
+        ///////////////Get bet365
+        String selAway = "#__moneylineDiv-nfl-265276 > table:nth-child(2) > tbody:nth-child(3) > tr:nth-child(3) > td:nth-child(9) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1)";
+        WebElement we = driver.findElement(By.cssSelector(selAway));
+        System.out.println("Main80 =================== " + we.getText());
+        String selHome = "#__moneylineDiv-nfl-265276 > table:nth-child(2) > tbody:nth-child(3) > tr:nth-child(3) > td:nth-child(9) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1)";
+        WebElement we2 = driver.findElement(By.cssSelector(selHome));
+        System.out.println("Main82 =================== " + we2.getText());
+        System.out.println("Main83 we*******************************bet365, data-game => " + "---, " + " data-book='bet365, awayOdds' => " + we.getText());
+        System.out.println("Main84 we*******************************bet365, data-game => " + "---, " + " data-book='bet365, homeOdds' => " + we2.getText());
+        ///////////////////////////////////////////////////////////////////////// MAIN LOOP ////////////////////////////////////////////////////////////
         for (Map.Entry<String, String> entry : xRefMap.entrySet())
         {
             String dataEventId = entry.getKey();
             String dataGame = xRefMap.get(dataEventId);
-            System.out.println("Main64 " + dataEventId + " " + xRefMap.get(dataEventId) + " " + dataCollector.getGameDatesMap().get(dataEventId) + " " + dataCollector.getAwayFullNameMap().get(dataEventId) + " vs " + dataCollector.getHomeFullNameMap().get(dataEventId));
-            System.out.println(".....");
+            System.out.println("Main91, data-event-id=> " + dataEventId + " " + xRefMap.get(dataEventId) + " " + dataCollector.getGameDatesMap().get(dataEventId) + " " + dataCollector.getAwayFullNameMap().get(dataEventId) + " vs " + dataCollector.getHomeFullNameMap().get(dataEventId));
+            System.out.println("Main92 .....");
             consensusElements = webSiteReader.readCleanWebsite("https://contests.covers.com/consensus/matchupconsensusdetails?externalId=%2fsport%2ffootball%2fcompetition%3a" + dataEventId);
             dataCollector.collectConsensusData(consensusElements, dataEventId);
             excelBuilder.setThisWeekAwayTeamsMap(dataCollector.getAwayFullNameMap());
@@ -104,12 +105,14 @@ public class Main
             excelBuilder.setGameIdentifier(dataCollector.getGameIdentifierMap().get(dataEventId));
             excelBuilder.buildExcel(sportDataWorkbook, dataEventId, globalMatchupIndex, dataCollector.getGameIdentifierMap().get(dataEventId));
             globalMatchupIndex++;
+            break;
         }
+        ///////////////////////////////////////////////////////////////////////// END MAIN LOOP ////////////////////////////////////////////////////////////
         excelWriter.openOutputStream();
         excelWriter.writeSportData(sportDataWorkbook);
         excelWriter.closeOutputStream();
         driver.quit();
-        System.out.println("Proper Finish...HOORAY!");
+        System.out.println("Main112 Proper Finish...HOORAY!");
     }
     public HashMap<String, String> buildXref(org.jsoup.select.Elements weekElements)
     {
@@ -168,25 +171,25 @@ public class Main
     }
     private void fillWeekNumberMap()
     {
-//        weekNumberMap.put("1", "2021-09-09");//Season start...Week 1
-//        weekNumberMap.put("2", "2021-09-16");
-//        weekNumberMap.put("3", "2021-09-23");
-//        weekNumberMap.put("4", "2021-09-30");
-//        weekNumberMap.put("5", "2021-10-07");
-//        weekNumberMap.put("6", "2021-10-14");
-//        weekNumberMap.put("7", "2021-10-21");
-//        weekNumberMap.put("8", "2021-10-28");
-//        weekNumberMap.put("9", "2021-11-04");
-//        weekNumberMap.put("10", "2021-11-11");
-//        weekNumberMap.put("11", "2021-11-18");
-//        weekNumberMap.put("12", "2021-11-25");
-//        weekNumberMap.put("13", "2021-12-02");
-//        weekNumberMap.put("14", "2021-12-09");
-//        weekNumberMap.put("15", "2021-12-16");
-//        weekNumberMap.put("16", "2021-12-23");
-//        weekNumberMap.put("17", "2022-01-02");
-//        weekNumberMap.put("18", "2022-01-09");
-//        weekNumberMap.put("19", "2022-02-06");
+        //        weekNumberMap.put("1", "2021-09-09");//Season start...Week 1
+        //        weekNumberMap.put("2", "2021-09-16");
+        //        weekNumberMap.put("3", "2021-09-23");
+        //        weekNumberMap.put("4", "2021-09-30");
+        //        weekNumberMap.put("5", "2021-10-07");
+        //        weekNumberMap.put("6", "2021-10-14");
+        //        weekNumberMap.put("7", "2021-10-21");
+        //        weekNumberMap.put("8", "2021-10-28");
+        //        weekNumberMap.put("9", "2021-11-04");
+        //        weekNumberMap.put("10", "2021-11-11");
+        //        weekNumberMap.put("11", "2021-11-18");
+        //        weekNumberMap.put("12", "2021-11-25");
+        //        weekNumberMap.put("13", "2021-12-02");
+        //        weekNumberMap.put("14", "2021-12-09");
+        //        weekNumberMap.put("15", "2021-12-16");
+        //        weekNumberMap.put("16", "2021-12-23");
+        //        weekNumberMap.put("17", "2022-01-02");
+        //        weekNumberMap.put("18", "2022-01-09");
+        //        weekNumberMap.put("19", "2022-02-06");
         weekNumberMap.put("1", "2022-09-08");//Season start...Week 1
         weekNumberMap.put("2", "2022-09-15");
         weekNumberMap.put("3", "2022-09-22");
