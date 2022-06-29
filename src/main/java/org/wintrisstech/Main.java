@@ -6,14 +6,19 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import javax.swing.*;
 import java.io.IOException;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+
+import static org.openqa.selenium.support.ui.ExpectedConditions.*;
 /****************************************
  * Crazy Working selenium demo
  * version crazy2 220624
@@ -35,6 +40,7 @@ public class Main
     private int globalMatchupIndex = 3;
     private Elements oddsElements;
     private WebDriver driver;
+    private WebDriverWait wait;
     public static void main(String[] args) throws IOException, InterruptedException
     {
         System.out.println("Main38 Main40 Starting main()");
@@ -46,7 +52,7 @@ public class Main
     {
         System.out.println("Main45 GetGoing()");
         driver = new ChromeDriver();
-        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+        wait = new WebDriverWait(driver,  Duration.ofSeconds(10));
         fillCityNameMap();
         fillWeekNumberMap();
         String weekNumber = JOptionPane.showInputDialog("Enter NFL week number");
@@ -62,24 +68,24 @@ public class Main
         sportDataWorkbook = excelReader.readSportData();
         driver.get("https://www.covers.com/sport/football/nfl/odds");//Get current year odds & betting lines
         /////////////Click on bet menu
-        WebElement bm = driver.findElement(By.cssSelector("#__betMenu"));//Bet Menu
+        wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("#__betMenu")));
+        WebElement bm = driver.findElement(By.cssSelector("#__betMenu"));
         bm.click();
-        System.out.println("Main69 Starting 1 second wait after bet Menu click");
-        Thread.sleep(1000);
-        System.out.println("Main71 Ending 1 second wait after bet menu");
+        System.out.println("Main74 clicked on betMenu");
         //////////Click on Moneyline
+        wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("[data-value=moneyline]")));
         WebElement ml = driver.findElement(By.cssSelector("[data-value=moneyline]"));//Moneyline
         ml.click();
-        System.out.println("Main75 clicked on Moneyline");
-        System.out.println("Main76 Starting 1 second wait after clicking on moneyline");
-        Thread.sleep(1000);
-        System.out.println("Main78 Ending 1 second wait after moneyline");
+        System.out.println("Main79 clicked on Moneyline");
         String data2Game = "265283";
-        ///////////////Get bet365
+        ///////////////Get bet365 awayOdds
         String selAway = "#__moneylineDiv-nfl-265276 > table:nth-child(2) > tbody:nth-child(3) > tr:nth-child(3) > td:nth-child(9) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1)";
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(selAway)));
         WebElement we = driver.findElement(By.cssSelector(selAway));
         System.out.println("Main80 =================== " + we.getText());
+        ///////////////Get bet365 homeOdds
         String selHome = "#__moneylineDiv-nfl-265276 > table:nth-child(2) > tbody:nth-child(3) > tr:nth-child(3) > td:nth-child(9) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1)";
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(selHome)));
         WebElement we2 = driver.findElement(By.cssSelector(selHome));
         System.out.println("Main82 =================== " + we2.getText());
         System.out.println("Main83 we*******************************bet365, data-game => " + "---, " + " data-book='bet365, awayOdds' => " + we.getText());
