@@ -7,6 +7,11 @@ package org.wintrisstech;
  *******************************************************************/
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -106,15 +111,15 @@ public class DataCollector
             homeShortNameMap.put(dataEventId, homeShortName);
         }
     }
-    public void collectConsensusData(Elements thisMatchupConsensus, String thisMatchupID)
+    public void collectConsensusData(Elements Consensus, String MatchupID)
     {
-        this.dataEventId = thisMatchupID;
+        this.dataEventId = MatchupID;
         String ouOver = null;
         String ouUnder = null;
         String atsHome = null;
         String atsAway = null;
-        Elements rightConsensus = thisMatchupConsensus.select(".covers-CoversConsensusDetailsTable-finalWagersright");//Home/Under
-        Elements leftConsensus = thisMatchupConsensus.select(".covers-CoversConsensusDetailsTable-finalWagersleft");//Away/Over
+        Elements rightConsensus = Consensus.select(".covers-CoversConsensusDetailsTable-finalWagersright");//Home/Under
+        Elements leftConsensus = Consensus.select(".covers-CoversConsensusDetailsTable-finalWagersleft");//Away/Over
         try//To catch missing consensus data due to delayed or cancelled game
         {
             ouUnder = rightConsensus.select("div").get(1).text();
@@ -126,10 +131,37 @@ public class DataCollector
         {
             System.out.println("DC127 DataCollector, no consensus data");
         }
-        ouOversMap.put(thisMatchupID, ouOver);
-        ouUndersMap.put(thisMatchupID, ouUnder);
-        atsHomesMap.put(thisMatchupID, atsAway);
-        atsAwaysMap.put(thisMatchupID, atsHome);
+        ouOversMap.put(MatchupID, ouOver);
+        ouUndersMap.put(MatchupID, ouUnder);
+        atsHomesMap.put(MatchupID, atsAway);
+        atsAwaysMap.put(MatchupID, atsHome);
+    }
+    public void getOdds(String thisMatchupID, WebDriver driver, WebDriverWait wait)
+    {
+            driver.get("https://www.covers.com/sport/football/nfl/odds");//Get current year odds & betting lines
+            /////////////Click on bet menu
+            wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("#__betMenu")));
+            WebElement bm = driver.findElement(By.cssSelector("#__betMenu"));
+            bm.click();
+            System.out.println("Main74 clicked on betMenu");
+            //////////Click on Moneyline
+            wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("[data-value=moneyline]")));
+            WebElement ml = driver.findElement(By.cssSelector("[data-value=moneyline]"));//Moneyline
+            ml.click();
+            System.out.println("Main79 clicked on Moneyline");
+            String data2Game = "265283";
+            ///////////////Get bet365 awayOdds
+            String selAway = "#__moneylineDiv-nfl-265276 > table:nth-child(2) > tbody:nth-child(3) > tr:nth-child(3) > td:nth-child(9) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1)";
+            wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(selAway)));
+            WebElement we = driver.findElement(By.cssSelector(selAway));
+            System.out.println("Main80 =================== " + we.getText());
+            ///////////////Get bet365 homeOdds
+            String selHome = "#__moneylineDiv-nfl-265276 > table:nth-child(2) > tbody:nth-child(3) > tr:nth-child(3) > td:nth-child(9) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1)";
+            wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(selHome)));
+            WebElement we2 = driver.findElement(By.cssSelector(selHome));
+            System.out.println("Main82 =================== " + we2.getText());
+            System.out.println("Main83 we*******************************bet365, data-game => " + "---, " + " data-book='bet365, awayOdds' => " + we.getText());
+            System.out.println("Main84 we*******************************bet365, data-game => " + "---, " + " data-book='bet365, homeOdds' => " + we2.getText());
     }
     public HashMap<String, String> getHomeFullNameMap()
     {

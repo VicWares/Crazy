@@ -6,10 +6,13 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeDriverService;
+import org.openqa.selenium.remote.service.DriverService;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import javax.swing.*;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.ArrayList;
@@ -66,30 +69,6 @@ public class Main
         System.out.println("Main58 week number => " + weekNumber + ", week date => " + weekDate + ", " + weekElements.size() + " games this week");
         dataCollector.collectTeamInfo(weekElements);
         sportDataWorkbook = excelReader.readSportData();
-        driver.get("https://www.covers.com/sport/football/nfl/odds");//Get current year odds & betting lines
-        /////////////Click on bet menu
-        wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("#__betMenu")));
-        WebElement bm = driver.findElement(By.cssSelector("#__betMenu"));
-        bm.click();
-        System.out.println("Main74 clicked on betMenu");
-        //////////Click on Moneyline
-        wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("[data-value=moneyline]")));
-        WebElement ml = driver.findElement(By.cssSelector("[data-value=moneyline]"));//Moneyline
-        ml.click();
-        System.out.println("Main79 clicked on Moneyline");
-        String data2Game = "265283";
-        ///////////////Get bet365 awayOdds
-        String selAway = "#__moneylineDiv-nfl-265276 > table:nth-child(2) > tbody:nth-child(3) > tr:nth-child(3) > td:nth-child(9) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1)";
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(selAway)));
-        WebElement we = driver.findElement(By.cssSelector(selAway));
-        System.out.println("Main80 =================== " + we.getText());
-        ///////////////Get bet365 homeOdds
-        String selHome = "#__moneylineDiv-nfl-265276 > table:nth-child(2) > tbody:nth-child(3) > tr:nth-child(3) > td:nth-child(9) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1)";
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(selHome)));
-        WebElement we2 = driver.findElement(By.cssSelector(selHome));
-        System.out.println("Main82 =================== " + we2.getText());
-        System.out.println("Main83 we*******************************bet365, data-game => " + "---, " + " data-book='bet365, awayOdds' => " + we.getText());
-        System.out.println("Main84 we*******************************bet365, data-game => " + "---, " + " data-book='bet365, homeOdds' => " + we2.getText());
         ///////////////////////////////////////////////////////////////////////// MAIN LOOP ////////////////////////////////////////////////////////////
         for (Map.Entry<String, String> entry : xRefMap.entrySet())
         {
@@ -110,6 +89,7 @@ public class Main
             excelBuilder.setCompleteAwayTeamName(dataCollector.getAwayTeamCompleteName());
             excelBuilder.setGameIdentifier(dataCollector.getGameIdentifierMap().get(dataEventId));
             excelBuilder.buildExcel(sportDataWorkbook, dataEventId, globalMatchupIndex, dataCollector.getGameIdentifierMap().get(dataEventId));
+            dataCollector.getOdds(dataEventId, driver, wait);
             globalMatchupIndex++;
             break;
         }
@@ -120,6 +100,7 @@ public class Main
         driver.quit();
         System.out.println("Main112 Proper Finish...HOORAY!");
     }
+
     public HashMap<String, String> buildXref(org.jsoup.select.Elements weekElements)
     {
         for (Element e : weekElements)
