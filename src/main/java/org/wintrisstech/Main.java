@@ -2,33 +2,20 @@ package org.wintrisstech;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeDriverService;
-import org.openqa.selenium.remote.service.DriverService;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 import javax.swing.*;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.time.Duration;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
-import static org.openqa.selenium.support.ui.ExpectedConditions.*;
 /****************************************
  * Crazy Working selenium demo
- * version crazy2 220624
+ * version crazy2 220702
  ****************************************/
 public class Main
 {
-    private static String version = "220624";
+    private static String version = "220629";
     public static String weekNumber;
     private XSSFWorkbook sportDataWorkbook;
     private HashMap<String, String> weekNumberMap = new HashMap<>();
@@ -43,7 +30,7 @@ public class Main
     private int globalMatchupIndex = 3;
     private Elements oddsElements;
     private WebDriver driver;
-    private WebDriverWait wait;
+
     public static void main(String[] args) throws IOException, InterruptedException
     {
         System.out.println("Main38 Main40 Starting main()");
@@ -55,7 +42,6 @@ public class Main
     {
         System.out.println("Main45 GetGoing()");
         driver = new ChromeDriver();
-        wait = new WebDriverWait(driver,  Duration.ofSeconds(10));
         fillCityNameMap();
         fillWeekNumberMap();
         String weekNumber = JOptionPane.showInputDialog("Enter NFL week number");
@@ -89,7 +75,7 @@ public class Main
             excelBuilder.setCompleteAwayTeamName(dataCollector.getAwayTeamCompleteName());
             excelBuilder.setGameIdentifier(dataCollector.getGameIdentifierMap().get(dataEventId));
             excelBuilder.buildExcel(sportDataWorkbook, dataEventId, globalMatchupIndex, dataCollector.getGameIdentifierMap().get(dataEventId));
-            dataCollector.getOdds(dataEventId, driver, wait);
+            dataCollector.getOdds(driver, dataEventId, xRefMap);
             globalMatchupIndex++;
             break;
         }

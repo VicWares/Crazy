@@ -2,7 +2,7 @@ package org.wintrisstech;
 /*******************************************************************
  * Covers NFL Extraction Tool
  * Copyright 2020 Dan Farris
- * version crazy2 220628
+ * version crazy2 220702
  * Builds data event id array and calendar date array
  *******************************************************************/
 import org.jsoup.nodes.Element;
@@ -13,6 +13,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
 public class DataCollector
@@ -75,6 +76,7 @@ public class DataCollector
     private String[] bet365OddsArray = new String[6];
     public HashMap<String, String> getAwayMLoddsMap() {return awayMLoddsMap;}
     public HashMap<String, String> getHomeMLoddsMap() {return awayMLoddsMap;}
+    private WebDriverWait wait;
     public void collectTeamInfo(Elements thisWeekElements)//From covers.com website for this week's matchups
     {
         for (Element e : thisWeekElements)//Build week matchup IDs array
@@ -136,32 +138,32 @@ public class DataCollector
         atsHomesMap.put(MatchupID, atsAway);
         atsAwaysMap.put(MatchupID, atsHome);
     }
-    public void getOdds(String thisMatchupID, WebDriver driver, WebDriverWait wait)
+    public void getOdds(WebDriver driver, String dataEventId, HashMap xRefMap)
     {
+            wait = new WebDriverWait(driver,  Duration.ofSeconds(10));
+            String dataGame = (String)xRefMap.get(dataEventId);
             driver.get("https://www.covers.com/sport/football/nfl/odds");//Get current year odds & betting lines
             /////////////Click on bet menu
             wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("#__betMenu")));
             WebElement bm = driver.findElement(By.cssSelector("#__betMenu"));
             bm.click();
-            System.out.println("Main74 clicked on betMenu");
+            System.out.println("GetOdds147 clicked on betMenu");
             //////////Click on Moneyline
             wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("[data-value=moneyline]")));
             WebElement ml = driver.findElement(By.cssSelector("[data-value=moneyline]"));//Moneyline
             ml.click();
-            System.out.println("Main79 clicked on Moneyline");
-            String data2Game = "265283";
+            System.out.println("GetOdds152 clicked on Moneyline");
             ///////////////Get bet365 awayOdds
-            String selAway = "#__moneylineDiv-nfl-265276 > table:nth-child(2) > tbody:nth-child(3) > tr:nth-child(3) > td:nth-child(9) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1)";
-            wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(selAway)));
-            WebElement we = driver.findElement(By.cssSelector(selAway));
-            System.out.println("Main80 =================== " + we.getText());
+//            wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#__moneylineDiv-nfl-265283 > table:nth-child(2) > tbody:nth-child(3) > tr:nth-child(3) > td:nth-child(9) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1)")));
+//            WebElement we = driver.findElement(By.cssSelector("#__moneylineDiv-nfl-265283 > table:nth-child(2) > tbody:nth-child(3) > tr:nth-child(3) > td:nth-child(9) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1)"));
+//            System.out.println("getOdds156 =================== " + we.getText());
             ///////////////Get bet365 homeOdds
-            String selHome = "#__moneylineDiv-nfl-265276 > table:nth-child(2) > tbody:nth-child(3) > tr:nth-child(3) > td:nth-child(9) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1)";
-            wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(selHome)));
-            WebElement we2 = driver.findElement(By.cssSelector(selHome));
-            System.out.println("Main82 =================== " + we2.getText());
-            System.out.println("Main83 we*******************************bet365, data-game => " + "---, " + " data-book='bet365, awayOdds' => " + we.getText());
-            System.out.println("Main84 we*******************************bet365, data-game => " + "---, " + " data-book='bet365, homeOdds' => " + we2.getText());
+            String selHome = "#__moneylineDiv-nfl-265283 > table:nth-child(2) > tbody:nth-child(3) > tr:nth-child(3) > td:nth-child(9) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1)";
+//            wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#__moneylineDiv-nfl-265283 > table:nth-child(2) > tbody:nth-child(3) > tr:nth-child(3) > td:nth-child(9) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1)")));
+//            WebElement we2 = driver.findElement(By.cssSelector("#__moneylineDiv-nfl-265283 > table:nth-child(2) > tbody:nth-child(3) > tr:nth-child(3) > td:nth-child(9) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1)"));
+//            System.out.println("getOdds161 =================== " + we2.getText());
+            //System.out.println("getOdds162 we*******************************bet365, data-game => " + "---, " + " data-book='bet365, awayOdds' => " + we.getText());
+//            System.out.println("getOdds163 we*******************************bet365, data-game => " + "---, " + " data-book='bet365, homeOdds' => " + we2.getText());
     }
     public HashMap<String, String> getHomeFullNameMap()
     {
