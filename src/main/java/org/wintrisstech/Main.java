@@ -16,11 +16,11 @@ import java.util.HashMap;
 import java.util.Map;
 /****************************************
  * Crazy Working selenium demo
- * version crazy2 220705
+ * version crazy2 220707
  ****************************************/
 public class Main
 {
-    private static String version = "220705";
+    private static String version = "220707";
     public static String weekNumber;
     private XSSFWorkbook sportDataWorkbook;
     private HashMap<String, String> weekNumberMap = new HashMap<>();
@@ -35,7 +35,8 @@ public class Main
     private int globalMatchupIndex = 3;
     private Elements oddsElements;
     public static WebDriver driver;
-    public static WebDriverWait  wait;
+    public static WebDriverWait wait;
+    private int gameIndex;
 
     public static void main(String[] args) throws IOException, InterruptedException
     {
@@ -63,23 +64,23 @@ public class Main
         dataCollector.collectTeamInfo(weekElements);
         sportDataWorkbook = excelReader.readSportData();
         Main.driver.get("https://www.covers.com/sport/football/nfl/odds");//Get current year odds & betting lines
-        /////////////Click on bet menu
+        ///////////Click on bet menu
         Main.wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("#__betMenu")));
         WebElement bm = Main.driver.findElement(By.cssSelector("#__betMenu"));
         bm.click();
-        System.out.println("Main70 clicked on betMenu");
+        System.out.println("Main71 clicked on betMenu");
         //////////Click on Moneyline
         Main.wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("[data-value=moneyline]")));
         WebElement ml = Main.driver.findElement(By.cssSelector("[data-value=moneyline]"));//Moneyline
         ml.click();
-        System.out.println("Main75 clicked on Moneyline");
-
+        System.out.println("Main76 clicked on Moneyline");
         ///////////////////////////////////////////////////////////////////////// MAIN LOOP ////////////////////////////////////////////////////////////
         for (Map.Entry<String, String> entry : xRefMap.entrySet())
         {
+            gameIndex++;
             String dataEventId = entry.getKey();
-            System.out.println("Main91, data-event-id=> " + dataEventId + " " + xRefMap.get(dataEventId) + " " + dataCollector.getGameDatesMap().get(dataEventId) + " " + dataCollector.getAwayFullNameMap().get(dataEventId) + " vs " + dataCollector.getHomeFullNameMap().get(dataEventId));
-            System.out.println("Main92 .....");
+            System.out.println("Main82 /////////////////////////////////////// BEGIN MAIN LOOP ///////////////////////////////////////////////////////////////////////////=> " + gameIndex);
+            System.out.println("Main83, data-event-id=> " + dataEventId + ", " + xRefMap.get(dataEventId) + " " + dataCollector.getGameDatesMap().get(dataEventId) + " " + dataCollector.getAwayFullNameMap().get(dataEventId) + " vs " + dataCollector.getHomeFullNameMap().get(dataEventId));
             consensusElements = webSiteReader.readCleanWebsite("https://contests.covers.com/consensus/matchupconsensusdetails?externalId=%2fsport%2ffootball%2fcompetition%3a" + dataEventId);
             dataCollector.collectConsensusData(consensusElements, dataEventId);
             excelBuilder.setThisWeekAwayTeamsMap(dataCollector.getAwayFullNameMap());
@@ -93,9 +94,9 @@ public class Main
             excelBuilder.setCompleteAwayTeamName(dataCollector.getAwayTeamCompleteName());
             excelBuilder.setGameIdentifier(dataCollector.getGameIdentifierMap().get(dataEventId));
             excelBuilder.buildExcel(sportDataWorkbook, dataEventId, globalMatchupIndex, dataCollector.getGameIdentifierMap().get(dataEventId));
-            dataCollector.getOdds(dataEventId, xRefMap, xRefMap.get(dataEventId));
+            String dataGame = xRefMap.get(dataEventId);
+            dataCollector.getOdds(dataGame);
             globalMatchupIndex++;
-            //break;
         }
         ///////////////////////////////////////////////////////////////////////// END MAIN LOOP ////////////////////////////////////////////////////////////
         excelWriter.openOutputStream();
