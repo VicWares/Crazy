@@ -2,14 +2,11 @@ package org.wintrisstech;
 /*******************************************************************
  * Covers NFL Extraction Tool
  * Copyright 2020 Dan Farris
- * version crazy2 220707
+ * version crazy2 220708
  * Builds data event id array and calendar date array
  *******************************************************************/
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -128,23 +125,21 @@ public class DataCollector
         catch (Exception e)
         {
             System.out.println("DC132 DataCollector, no consensus data");
+            ouUnder = "no data";
+            ouOver = "no data";
+            atsHome = "no data";
+            atsAway = "no data";
         }
         ouOversMap.put(MatchupID, ouOver);
         ouUndersMap.put(MatchupID, ouUnder);
         atsHomesMap.put(MatchupID, atsAway);
         atsAwaysMap.put(MatchupID, atsHome);
     }
-    public void getOdds(String dataGame)
+    public void getOdds(String dataGame, Elements oddsElements)
     {
            try ///////////////Get bet365 awayOdds
            {
-//               Main.wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("#__spreadTotalDiv-nfl-265276 > table > tbody > tr:nth-child(2) > td:nth-child(9) > div > div.__awayOdds > div.American.__american > span")));
-//               WebElement we = Main.driver.findElement(By.cssSelector("#__spreadTotalDiv-nfl-265276 > table > tbody > tr:nth-child(2) > td:nth-child(9) > div > div.__awayOdds > div.American.__american > span"));
-               Main.wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"__spreadTotalDiv-nfl-265276\"]/table/tbody/tr[2]/td[9]/div/div[1]/div[1]/span")));
-               WebElement we = Main.driver.findElement(By.xpath("//*[@id=\"__spreadTotalDiv-nfl-265276\"]/table/tbody/tr[2]/td[9]/div/div[1]/div[1]/span"));
-//               Main.wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("#__spreadTotalDiv-nfl-" + dataGame + " > table:nth-child(2) > tbody:nth-child(3) > tr:nth-child(1) > td:nth-child(9) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > span:nth-child(1)")));
-//               WebElement we = Main.driver.findElement(By.cssSelector("#__spreadTotalDiv-nfl-" + dataGame + " > table:nth-child(2) > tbody:nth-child(3) > tr:nth-child(1) > td:nth-child(9) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > span:nth-child(1)"));
-               System.out.println("AwayOdds145 ?===================> " + we.getText() + " for dataGame + " + dataGame);
+//               System.out.println("AwayOdds145 ?===================> " + we.getText() + " for dataGame + " + dataEventId);
            }
         catch(Exception e)
         {

@@ -2,7 +2,7 @@ package org.wintrisstech;
 /*******************************************************************
  * Covers NFL Extraction Tool
  * Copyright 2020 Dan Farris
- * version crazy2 220707
+ * version crazy2 220708
  *******************************************************************/
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.IndexedColors;
@@ -36,7 +36,7 @@ public class ExcelBuilder
     private XSSFWorkbook sportDataWorkBook = new XSSFWorkbook();
     private XSSFSheet sportDataUpdateSheet = null;
     byte[] redColor = new byte[]{(byte) 255, (byte) 0, (byte) 0};
-    Color color =  new Color(215,228,188);
+    Color color = new Color(215, 228, 188);
     private String atsHome;
     private String atsAway;
     private String completeHomeTeamName;
@@ -72,52 +72,51 @@ public class ExcelBuilder
         atsAway = atsAwaysMap.get(dataEventID);
         ouOver = ouOversMap.get(dataEventID);
         ouUnder = ouUndersMap.get(dataEventID);
-
         sportDataSheet.getRow(eventIndex).createCell(0);
         sportDataSheet.getRow(eventIndex).getCell(0).setCellStyle(leftStyle);
         sportDataSheet.getRow(0).getCell(0).setCellValue(time);
         sportDataSheet.getRow(eventIndex).getCell(0).setCellValue(gameIdentifier);//e.g. 2021 - Washington Football Team @ Dallas Cowboys
-
         sportDataSheet.getRow(eventIndex).createCell(1);
         sportDataSheet.getRow(eventIndex).getCell(1).setCellStyle(centerStyle);
         sportDataSheet.getRow(eventIndex).getCell(1).setCellValue(thisMatchupDate);
-
         sportDataSheet.getRow(eventIndex).createCell(12);//Spread home odds, column M
         sportDataSheet.getRow(eventIndex).getCell(12).setCellStyle(centerStyle);
         sportDataSheet.getRow(eventIndex).getCell(12).setCellValue(homeSpreadOddsMap.get(dataEventID));
-
         sportDataSheet.getRow(eventIndex).createCell(17);//MoneyLine Bet365 home odds, column R
         sportDataSheet.getRow(eventIndex).getCell(17).setCellStyle(centerStyle);
         sportDataSheet.getRow(eventIndex).getCell(17).setCellValue(homeMoneyLineOddsMap.get(dataEventID));
-
         sportDataSheet.getRow(eventIndex).createCell(26);//Spread away odds, column AA
         sportDataSheet.getRow(eventIndex).getCell(26).setCellStyle(centerStyle);
         sportDataSheet.getRow(eventIndex).getCell(26).setCellValue(awaySpreadOddsMap.get(dataEventID));
-
         sportDataSheet.getRow(eventIndex).createCell(31);//MoneyLine Bet365 away odds, column AF
         sportDataSheet.getRow(eventIndex).getCell(31).setCellStyle(centerStyle);
         sportDataSheet.getRow(eventIndex).getCell(31).setCellValue(awayMoneyLineOddsMap.get(dataEventID));
-
         sportDataSheet.getRow(eventIndex).createCell(59);
         sportDataSheet.getRow(eventIndex).getCell(59).setCellStyle(myStyle);
         sportDataSheet.getRow(eventIndex).getCell(59).setCellValue(atsHome);
-
         sportDataSheet.getRow(eventIndex).createCell(61);
         sportDataSheet.getRow(eventIndex).getCell(61).setCellStyle(myStyle);
         sportDataSheet.getRow(eventIndex).getCell(61).setCellValue(atsAway);
-
         sportDataSheet.getRow(eventIndex).createCell(64);
         sportDataSheet.getRow(eventIndex).getCell(64).setCellStyle(myStyle);
         sportDataSheet.getRow(eventIndex).getCell(64).setCellValue(ouOver);
-
         sportDataSheet.getRow(eventIndex).createCell(66);
         sportDataSheet.getRow(eventIndex).getCell(66).setCellStyle(myStyle);
         sportDataSheet.getRow(eventIndex).getCell(66).setCellValue(ouUnder);
         return sportDataWorkbook;
     }
-    public void setHomeTeamsMap(HashMap<String, String> homeTeamsMap){this.homeTeamsMap = homeTeamsMap;}
-    public void setThisWeekAwayTeamsMap(HashMap<String, String> thisWeekAwayTeamsMap){this.awayTeamsMap = thisWeekAwayTeamsMap;}
-    public void setGameDatesMap(HashMap<String, String> gameDatesMap) {this.gameDatesMap = gameDatesMap;}
+    public void setHomeTeamsMap(HashMap<String, String> homeTeamsMap)
+    {
+        this.homeTeamsMap = homeTeamsMap;
+    }
+    public void setThisWeekAwayTeamsMap(HashMap<String, String> thisWeekAwayTeamsMap)
+    {
+        this.awayTeamsMap = thisWeekAwayTeamsMap;
+    }
+    public void setGameDatesMap(HashMap<String, String> gameDatesMap)
+    {
+        this.gameDatesMap = gameDatesMap;
+    }
     public void setAtsHomesMap(HashMap<String, String> atsHomes)
     {
         this.atsHomesMap = atsHomes;
@@ -126,28 +125,32 @@ public class ExcelBuilder
     {
         this.atsAwaysMap = atsAwayMap;
     }
-    public void setOuOversMap(HashMap<String, String> ouOversMap){this.ouOversMap = ouOversMap;}
+    public void setOuOversMap(HashMap<String, String> ouOversMap)
+    {
+        this.ouOversMap = ouOversMap;
+    }
     public void setOuUndersMap(HashMap<String, String> ouUndersMap)
     {
         this.ouUndersMap = ouUndersMap;
     }
-    public void setCompleteHomeTeamName(String completeHomeTeamName){this.completeHomeTeamName = completeHomeTeamName;}
-    public void setCompleteAwayTeamName(String completeAwayTeamName){this.completeAwayTeamName = completeAwayTeamName;}
-    public void setGameIdentifier(String gameIdentifier){this.gameIdentifier = gameIdentifier;}
+    public void setCompleteHomeTeamName(String completeHomeTeamName)
+    {
+        this.completeHomeTeamName = completeHomeTeamName;
+    }
+    public void setCompleteAwayTeamName(String completeAwayTeamName)
+    {
+        this.completeAwayTeamName = completeAwayTeamName;
+    }
+    public void setGameIdentifier(String gameIdentifier)
+    {
+        this.gameIdentifier = gameIdentifier;
+    }
     public void setHomeMLOddsMap(HashMap<String, String> homeMLOddsMap)
     {
         this.homeMLOddsMap = homeMLOddsMap;
     }
     public void setMoneyLineOdds(String moneyLineOdds, String dataEventId)
     {
-        //        String[] moneyLineOddsArray = moneyLineOdds.split(" ");
-        //        if (moneyLineOddsArray.length > 0)
-        //      {
-        //          awayMoneyLineOdds = moneyLineOddsArray[0];
-        //          awayMoneyLineOddsMap.put(dataEventId, awayMoneyLineOdds);
-        //          homeMoneyLineOdds = moneyLineOddsArray[1];
-        //          homeMoneyLineOddsMap.put(dataEventId, homeMoneyLineOdds);
-        //      }
     }
     public void setSpreadOdds(String spreadOdds, String dataEventId)
     {
