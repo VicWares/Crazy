@@ -2,7 +2,7 @@ package org.wintrisstech;
 /*******************************************************************
  * Covers NFL Extraction Tool
  * Copyright 2020 Dan Farris
- * version crazy2 220708
+ * version crazy2 220709
  * Builds data event id array and calendar date array
  *******************************************************************/
 import org.jsoup.nodes.Element;
@@ -70,9 +70,9 @@ public class DataCollector
     private String[] bet365OddsArray = new String[6];
     public HashMap<String, String> getAwayMLoddsMap() {return awayMLoddsMap;}
     public HashMap<String, String> getHomeMLoddsMap() {return awayMLoddsMap;}
-    public void collectTeamInfo(Elements thisWeekElements)//From covers.com website for this week's matchups
+    public void collectTeamInfo(Elements weekElements)//From covers.com website for this week's matchups
     {
-        for (Element e : thisWeekElements)//Build week matchup IDs array
+        for (Element e : weekElements)//Build week matchup IDs array
         {
             homeTeamFullName = e.attr("data-home-team-fullname-search");//e.g. Houston...correcting for different city/name usage
             homeTeamNickname = e.attr("data-home-team-nickname-search");//e.g. Texans
@@ -135,16 +135,14 @@ public class DataCollector
         atsHomesMap.put(MatchupID, atsAway);
         atsAwaysMap.put(MatchupID, atsHome);
     }
-    public void getOdds(String dataGame, Elements oddsElements)
+    public void collectOdds(String dataGame, Elements oddsElements)
     {
-           try ///////////////Get bet365 awayOdds
+        System.out.println("DC140 collecting odds");
+           ///////////////Get bet365 awayOdds
            {
-//               System.out.println("AwayOdds145 ?===================> " + we.getText() + " for dataGame + " + dataEventId);
+               String wb1 = oddsElements.select("#__moneylineDiv-nfl-265283").text();
+               System.out.println("AwayOdds144 ?=================== odds >" + wb1 + "< for dataGame + " + dataGame);
            }
-        catch(Exception e)
-        {
-            System.out.println("DC1149  dataGame mismatch, dataGame=> " +  dataGame + " not found");
-        }
     }
     public HashMap<String, String> getHomeFullNameMap()
     {
