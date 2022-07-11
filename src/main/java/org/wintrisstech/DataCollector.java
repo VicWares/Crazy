@@ -2,7 +2,7 @@ package org.wintrisstech;
 /*******************************************************************
  * Covers NFL Extraction Tool
  * Copyright 2020 Dan Farris
- * version crazy2 220709
+ * version crazy2 220710
  * Builds data event id array and calendar date array
  *******************************************************************/
 import org.jsoup.nodes.Element;
@@ -135,14 +135,19 @@ public class DataCollector
         atsHomesMap.put(MatchupID, atsAway);
         atsAwaysMap.put(MatchupID, atsHome);
     }
-    public void collectOdds(String dataGame, Elements oddsElements)
+    public void collectOdds(String dataGame, Elements soupOddsElements)
     {
         System.out.println("DC140 collecting odds");
            ///////////////Get bet365 awayOdds
+        try
            {
-               String wb1 = oddsElements.select("#__moneylineDiv-nfl-265283").text();
-               System.out.println("AwayOdds144 ?=================== odds >" + wb1 + "< for dataGame + " + dataGame);
+               String wb1 = soupOddsElements.select("[data-book='WynnBET'],[data-game='265283'] [data-type='moneyline'] .__bookOdds covers-Covers-Odds-withNoBorder div.__awayOdds div.American, div.__american,[style='display: block']").text();// div.__awayOdds div.American + .__american").text();// .__awayOdds .American").text();
+               System.out.println("AwayOdds144 ...........................................odds >" + wb1 + "< for dataGame + " + dataGame);
            }
+        catch (Exception e)
+        {
+            System.out.println("Unable to find WynnBet, dataGAme, moneyline");
+        }
     }
     public HashMap<String, String> getHomeFullNameMap()
     {

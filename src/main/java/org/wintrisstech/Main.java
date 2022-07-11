@@ -15,11 +15,11 @@ import java.util.HashMap;
 import java.util.Map;
 /****************************************
  * Crazy Working selenium demo
- * version crazy2 220709
+ * version crazy2 220710
  ****************************************/
 public class Main
 {
-    private static String version = "220708";
+    private static String version = "220710";
     private XSSFWorkbook sportDataWorkbook;
     private HashMap<String, String> weekDateMap = new HashMap<>();
     private HashMap<String, String> cityNameMap = new HashMap<>();
@@ -31,18 +31,17 @@ public class Main
     public DataCollector dataCollector = new DataCollector();
     public WebSiteReader websiteReader;
     private org.jsoup.select.Elements consensusElements;
-    private org.jsoup.select.Elements oddsElements;
     private int globalMatchupIndex = 3;
     public static WebDriver driver;
     public static WebDriverWait wait;
     private int loopCounter;
-
+    private String dataGame;
     public static void main(String[] args) throws IOException, InterruptedException
     {
         System.out.println("Main43 Starting main() version " + version);
-        System.setProperty("webdriver.chrome.driver", "/Users/vicwintriss/Downloads/chromedriver");
-        Main.driver = new ChromeDriver();
-        Main.wait = new WebDriverWait(driver,  Duration.ofSeconds(10));
+//        System.setProperty("webdriver.chrome.driver", "/Users/vicwintriss/Downloads/chromedriver");
+//        Main.driver = new ChromeDriver();
+//        Main.wait = new WebDriverWait(driver,  Duration.ofSeconds(10));
         Main main = new Main();
         main.getGoing();//To get out of static context
     }
@@ -63,29 +62,24 @@ public class Main
         System.out.println("Main66 week number => " + weekNumber + ", week date => " + weekDate + ", " + weekElements.size() + " games this week");
         dataCollector.collectTeamInfo(weekElements);
         sportDataWorkbook = excelReader.readSportData();
-        Main.driver.get("https://www.covers.com/sport/football/nfl/odds");//Get current week odds & betting lines
-        //Click on Accept Cookies
-        Main.wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("#CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll")));
-        WebElement cookie = Main.driver.findElement(By.cssSelector("#CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll"));
-        cookie.click();
-        System.out.println("Main74 clicked on Cookies");
-        //Click on bet menu
-        Main.wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("#__betMenu")));
-        WebElement bm = Main.driver.findElement(By.cssSelector("#__betMenu"));
-        bm.click();
-        System.out.println("Main79 clicked on betMenu");
-        //Click on Moneyline
-        Main.wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("[data-value=moneyline]")));
-        WebElement ml = Main.driver.findElement(By.cssSelector("[data-value=moneyline]"));//Moneyline
-        ml.click();
-        System.out.println("Main84 clicked on Moneyline");
+//        Main.driver.get("https://www.covers.com/sport/football/nfl/odds");//Get current week odds & betting lines
+//        //Click on bet menu
+//        Main.wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("#__betMenu")));
+//        WebElement bm = Main.driver.findElement(By.cssSelector("#__betMenu"));
+//        bm.click();
+//        System.out.println("Main79 clicked on betMenu");
+//        //Click on Moneyline
+//        Main.wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("[data-value=moneyline]")));
+//        WebElement ml = Main.driver.findElement(By.cssSelector("[data-value=moneyline]"));//Moneyline
+//        ml.click();
+//        System.out.println("Main84 clicked on Moneyline");
+        org.jsoup.select.Elements soupOddsElements = webSiteReader.readWebsite("https://www.covers.com/sport/football/nfl/odds");
         ///////////////////////////////////////////////////////////////////////// MAIN LOOP ////////////////////////////////////////////////////////////
-        org.jsoup.select.Elements oddsElements =  webSiteReader.readWebsite("https://www.covers.com/sport/football/nfl/odds");
         for (Map.Entry<String, String> entry : xRefMap.entrySet())
         {
             loopCounter++;
             String dataEventId = entry.getKey();
-            String dataGame = xRefMap.get(dataEventId);
+            dataGame = xRefMap.get(dataEventId);
             System.out.println("Main92 /////////////////////////////////////// BEGIN MAIN LOOP ///////////////////////////////////////////////////////////////////////////=> " + loopCounter);
             System.out.println("Main93, data-event-id=> " + dataEventId + ", data-game=> " + dataGame + ", " + " " + dataCollector.getAwayFullNameMap().get(dataEventId) + " vs " + dataCollector.getHomeFullNameMap().get(dataEventId));
             consensusElements = webSiteReader.readWebsite("https://contests.covers.com/consensus/matchupconsensusdetails?externalId=%2fsport%2ffootball%2fcompetition%3a" + dataEventId);
@@ -101,10 +95,10 @@ public class Main
             excelBuilder.setCompleteAwayTeamName(dataCollector.getAwayTeamCompleteName());
             excelBuilder.setGameIdentifier(dataCollector.getGameIdentifierMap().get(dataEventId));
             excelBuilder.buildExcel(sportDataWorkbook, dataEventId, globalMatchupIndex, dataCollector.getGameIdentifierMap().get(dataEventId));
-            dataCollector.collectOdds(dataGame, oddsElements);
             globalMatchupIndex++;
         }
         ///////////////////////////////////////////////////////////////////////// END MAIN LOOP ////////////////////////////////////////////////////////////
+        dataCollector.collectOdds(dataGame, soupOddsElements);
         excelWriter.openOutputStream();
         excelWriter.writeSportData(sportDataWorkbook);
         excelWriter.closeOutputStream();
