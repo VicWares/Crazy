@@ -15,11 +15,11 @@ import java.util.HashMap;
 import java.util.Map;
 /****************************************
  * Crazy Working selenium demo
- * version crazy2 220710
+ * version crazy2 220710A
  ****************************************/
 public class Main
 {
-    private static String version = "220710";
+    private static String version = "220710A";
     private XSSFWorkbook sportDataWorkbook;
     private HashMap<String, String> weekDateMap = new HashMap<>();
     private HashMap<String, String> cityNameMap = new HashMap<>();
@@ -62,17 +62,6 @@ public class Main
         System.out.println("Main66 week number => " + weekNumber + ", week date => " + weekDate + ", " + weekElements.size() + " games this week");
         dataCollector.collectTeamInfo(weekElements);
         sportDataWorkbook = excelReader.readSportData();
-//        Main.driver.get("https://www.covers.com/sport/football/nfl/odds");//Get current week odds & betting lines
-//        //Click on bet menu
-//        Main.wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("#__betMenu")));
-//        WebElement bm = Main.driver.findElement(By.cssSelector("#__betMenu"));
-//        bm.click();
-//        System.out.println("Main79 clicked on betMenu");
-//        //Click on Moneyline
-//        Main.wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("[data-value=moneyline]")));
-//        WebElement ml = Main.driver.findElement(By.cssSelector("[data-value=moneyline]"));//Moneyline
-//        ml.click();
-//        System.out.println("Main84 clicked on Moneyline");
         org.jsoup.select.Elements soupOddsElements = webSiteReader.readWebsite("https://www.covers.com/sport/football/nfl/odds");
         ///////////////////////////////////////////////////////////////////////// MAIN LOOP ////////////////////////////////////////////////////////////
         for (Map.Entry<String, String> entry : xRefMap.entrySet())
