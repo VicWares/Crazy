@@ -19,7 +19,7 @@ import java.util.Map;
  ****************************************/
 public class Main
 {
-    private static String version = "220710A";
+    private static String version = "220712";
     private XSSFWorkbook sportDataWorkbook;
     private HashMap<String, String> weekDateMap = new HashMap<>();
     private HashMap<String, String> cityNameMap = new HashMap<>();
@@ -39,9 +39,6 @@ public class Main
     public static void main(String[] args) throws IOException, InterruptedException
     {
         System.out.println("Main43 Starting main() version " + version);
-//        System.setProperty("webdriver.chrome.driver", "/Users/vicwintriss/Downloads/chromedriver");
-//        Main.driver = new ChromeDriver();
-//        Main.wait = new WebDriverWait(driver,  Duration.ofSeconds(10));
         Main main = new Main();
         main.getGoing();//To get out of static context
     }
@@ -69,8 +66,8 @@ public class Main
             loopCounter++;
             String dataEventId = entry.getKey();
             dataGame = xRefMap.get(dataEventId);
-            System.out.println("Main92 /////////////////////////////////////// BEGIN MAIN LOOP ///////////////////////////////////////////////////////////////////////////=> " + loopCounter);
-            System.out.println("Main93, data-event-id=> " + dataEventId + ", data-game=> " + dataGame + ", " + " " + dataCollector.getAwayFullNameMap().get(dataEventId) + " vs " + dataCollector.getHomeFullNameMap().get(dataEventId));
+            System.out.println("Main69 /////////////////////////////////////// BEGIN MAIN LOOP ///////////////////////////////////////////////////////////////////////////=> " + loopCounter);
+            System.out.println("Main70, data-event-id=> " + dataEventId + ", data-game=> " + dataGame + ", " + " " + dataCollector.getAwayFullNameMap().get(dataEventId) + " vs " + dataCollector.getHomeFullNameMap().get(dataEventId));
             consensusElements = webSiteReader.readWebsite("https://contests.covers.com/consensus/matchupconsensusdetails?externalId=%2fsport%2ffootball%2fcompetition%3a" + dataEventId);
             dataCollector.collectConsensusData(consensusElements, dataEventId);
             excelBuilder.setThisWeekAwayTeamsMap(dataCollector.getAwayFullNameMap());
@@ -86,13 +83,12 @@ public class Main
             excelBuilder.buildExcel(sportDataWorkbook, dataEventId, globalMatchupIndex, dataCollector.getGameIdentifierMap().get(dataEventId));
             globalMatchupIndex++;
         }
-        ///////////////////////////////////////////////////////////////////////// END MAIN LOOP ////////////////////////////////////////////////////////////
         dataCollector.collectOdds(dataGame, soupOddsElements);
+        ///////////////////////////////////////////////////////////////////////// END MAIN LOOP ////////////////////////////////////////////////////////////
         excelWriter.openOutputStream();
         excelWriter.writeSportData(sportDataWorkbook);
         excelWriter.closeOutputStream();
-        driver.quit();
-        System.out.println("Main112 Proper Finish...HOORAY!");
+        System.out.println("Main91 Proper Finish...HOORAY!");
     }
 
     public HashMap<String, String> buildXref(org.jsoup.select.Elements weekElements)
