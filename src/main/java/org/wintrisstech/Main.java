@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 /****************************************
  * Crazy Working selenium demo
- * version crazy2 220710A
+ * version crazy2 220714
  ****************************************/
 public class Main
 {
@@ -81,9 +81,9 @@ public class Main
             excelBuilder.setCompleteAwayTeamName(dataCollector.getAwayTeamCompleteName());
             excelBuilder.setGameIdentifier(dataCollector.getGameIdentifierMap().get(dataEventId));
             excelBuilder.buildExcel(sportDataWorkbook, dataEventId, globalMatchupIndex, dataCollector.getGameIdentifierMap().get(dataEventId));
+            dataCollector.collectOdds(dataGame, soupOddsElements);
             globalMatchupIndex++;
         }
-        dataCollector.collectOdds(dataGame, soupOddsElements);
         ///////////////////////////////////////////////////////////////////////// END MAIN LOOP ////////////////////////////////////////////////////////////
         excelWriter.openOutputStream();
         excelWriter.writeSportData(sportDataWorkbook);

@@ -2,7 +2,7 @@ package org.wintrisstech;
 /*******************************************************************
  * Covers NFL Extraction Tool
  * Copyright 2020 Dan Farris
- * version crazy2 220712
+ * version crazy2 220714
  * Builds data event id array and calendar date array
  *******************************************************************/
 import org.jsoup.nodes.Element;
@@ -144,15 +144,15 @@ public class DataCollector
     }
     public void collectOdds(String dataGame, Elements soupOddsElements)
     {
-        System.out.println("DC149 collecting odds");
-        Elements e = soupOddsElements.select("[data-book='WynnBet'],[data-game=" + dataGame + "] > [data-type='moneyline'] > .__awayOdds  .American + .__american");
-        String[] moneyLineOdds = e.text().split(" ");
-        for(int i = 0; i < moneyLineOdds.length; i++)
+        System.out.println("DC147 collecting odds");
+        Elements e = soupOddsElements.select("[data-book='WynnBET'][data-type='moneyline'] .__awayOdds .American.__american");
+        String[] awayOdds = e.text().split(" ");
+        for (int i = 0; i < awayOdds.length; i++)
         {
-            if (i % 4 == 0)
-                System.out.println(moneyLineOdds[i]);
+            {
+                System.out.println("DC153 moneyline/WynnBet/awayOdds" + i + " => " + awayOdds[i]);
+            }
         }
-        System.out.println("DC156                                                               data-game => " + dataGame + " ** " + moneyLineOdds);
     }
     public HashMap<String, String> getHomeFullNameMap()
     {
