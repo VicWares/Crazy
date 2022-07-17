@@ -15,11 +15,11 @@ import java.util.HashMap;
 import java.util.Map;
 /****************************************
  * Crazy Working selenium demo
- * version crazy2 220714
+ * version crazy2 220716
  ****************************************/
 public class Main
 {
-    private static String version = "220712";
+    private static String version = "220716";
     private XSSFWorkbook sportDataWorkbook;
     private HashMap<String, String> weekDateMap = new HashMap<>();
     private HashMap<String, String> cityNameMap = new HashMap<>();
@@ -44,7 +44,7 @@ public class Main
     }
     private void getGoing() throws IOException, InterruptedException
     {
-        System.out.println("Main54 GetGoing()");
+        System.out.println("Main47 GetGoing() crazy");
         websiteReader = new WebSiteReader();
         fillCityNameMap();
         fillWeekNumberMap();
