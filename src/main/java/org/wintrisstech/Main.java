@@ -1,25 +1,19 @@
 package org.wintrisstech;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.jsoup.nodes.Element;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-
 import javax.swing.*;
 import java.io.IOException;
-import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 /****************************************
  * Crazy Working selenium demo
- * version crazy 220717
+ * version crazy 220717A
  ****************************************/
 public class Main
 {
-    private static String version = "220717";
+    private static final String VERSION = "220717A";
     private XSSFWorkbook sportDataWorkbook;
     private HashMap<String, String> weekDateMap = new HashMap<>();
     private HashMap<String, String> cityNameMap = new HashMap<>();
@@ -38,20 +32,17 @@ public class Main
     private String dataGame;
     public static void main(String[] args) throws IOException, InterruptedException
     {
-        System.out.println("Main43 Starting main() version " + version);
         Main main = new Main();
         main.getGoing();//To get out of static context
     }
     private void getGoing() throws IOException, InterruptedException
     {
-        System.out.println("Main47 GetGoing() crazy");
         websiteReader = new WebSiteReader();
         fillCityNameMap();
         fillWeekNumberMap();
-        String weekNumber = JOptionPane.showInputDialog("Enter NFL week number");
+        String weekNumber = JOptionPane.showInputDialog("Enter NFL week number, e. g. 2");
         weekNumber = "1";
         String weekDate = weekDateMap.get(weekNumber);//Gets week date e.g. 2022-09-08 from week number e.g. 1,2,3,4,...
-        System.out.println("Main61 >>>>>>>>>>>>>>>>>>>>> weekDate: " + weekDate);
         org.jsoup.select.Elements nflElements = webSiteReader.readWebsite("https://www.covers.com/sports/nfl/matchups?selectedDate=" + weekDate);//Covers.com "Scores and Matchups" page for this week
         org.jsoup.select.Elements weekElements = nflElements.select(".cmg_game_data, .cmg_matchup_game_box");//Lots of good stuff in this Element: team name, team city...
         xRefMap = buildXref(weekElements);//Key is data-event-ID e.g 87579, Value is data-game e.g 265282, two different ways of selecting the same matchup (game)
@@ -61,7 +52,7 @@ public class Main
         sportDataWorkbook = excelReader.readSportData();
         org.jsoup.select.Elements soupOddsElements = webSiteReader.readWebsite("https://www.covers.com/sport/football/nfl/odds");
         ///////////////////////////////////////////////////////////////////////// MAIN LOOP ////////////////////////////////////////////////////////////
-        System.out.println("Main69 /////////////////////////////////////// BEGIN MAIN LOOP ///////////////////////////////////////////////////////////////////////////=> " + loopCounter);
+        System.out.println("Main69 /////////////////////////////////////// MAIN LOOP ///////////////////////////////////////////////////////////////////////////");
         for (Map.Entry<String, String> entry : xRefMap.entrySet())
         {
             loopCounter++;
@@ -80,11 +71,12 @@ public class Main
             excelBuilder.setCompleteAwayTeamName(dataCollector.getAwayTeamCompleteName());
             excelBuilder.setGameIdentifier(dataCollector.getGameIdentifierMap().get(dataEventId));
             excelBuilder.buildExcel(sportDataWorkbook, dataEventId, globalMatchupIndex, dataCollector.getGameIdentifierMap().get(dataEventId));
-            String gameOdds = dataCollector.collectOdds(dataGame, soupOddsElements);
-            System.out.println("Main70, data-event-id=> " + dataEventId + ", data-game=> " + dataGame + ", " + " " + dataCollector.getAwayFullNameMap().get(dataEventId) + " vs " + dataCollector.getHomeFullNameMap().get(dataEventId) + " odds => " + gameOdds);
+            String gameOddsString = dataCollector.collectOdds(dataGame, soupOddsElements);
+            excelBuilder.setBet365OddsMap(dataCollector.getBet365OddsMap());
+            System.out.println("Main75, data-event-id=> " + dataEventId + ", data-game=> " + dataGame + ", " + " " + dataCollector.getAwayFullNameMap().get(dataEventId) + " vs " + dataCollector.getHomeFullNameMap().get(dataEventId) + " odds => " + gameOddsString);
             globalMatchupIndex++;
         }
-        System.out.println("Main69 /////////////////////////////////////// END MAIN LOOP ///////////////////////////////////////////////////////////////////////////=> " + loopCounter);
+        System.out.println("Main69 /////////////////////////////////////// END MAIN LOOP ///////////////////////////////////////////////////////////////////////////=> " + loopCounter + " games.");
         ///////////////////////////////////////////////////////////////////////// END MAIN LOOP ////////////////////////////////////////////////////////////
         excelWriter.openOutputStream();
         excelWriter.writeSportData(sportDataWorkbook);

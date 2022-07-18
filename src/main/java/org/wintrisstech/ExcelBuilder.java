@@ -2,7 +2,7 @@ package org.wintrisstech;
 /*******************************************************************
  * Covers NFL Extraction Tool
  * Copyright 2020 Dan Farris
- * version crazy 220717
+ * version crazy 220717A
  *******************************************************************/
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.IndexedColors;
@@ -32,6 +32,10 @@ public class ExcelBuilder
     private HashMap<String, String> ouOversMap;
     private HashMap<String, String> ouUndersMap;
     private HashMap<String, String> homeMLOddsMap = new HashMap<>();
+    private HashMap<String, String> homeMoneyLineOddsMap = new HashMap<>();
+    private HashMap<String, String> bet365OddsMap = new HashMap<>();
+    private HashMap<String, String> homeSpreadOddsMap = new HashMap<>();
+    private HashMap<String, String> awaySpreadOddsMap = new HashMap<>();
     private Sheet sportDataSheet;
     private XSSFWorkbook sportDataWorkBook = new XSSFWorkbook();
     private XSSFSheet sportDataUpdateSheet = null;
@@ -46,10 +50,6 @@ public class ExcelBuilder
     private String homeMoneyLineOdds;
     private String awaySpreadOdds;
     private String homeSpreadOdds;
-    private HashMap<String, String> homeMoneyLineOddsMap = new HashMap<>();
-    private HashMap<String, String> awayMoneyLineOddsMap = new HashMap<>();
-    private HashMap<String, String> homeSpreadOddsMap = new HashMap<>();
-    private HashMap<String, String> awaySpreadOddsMap = new HashMap<>();
     public XSSFWorkbook buildExcel(XSSFWorkbook sportDataWorkbook, String dataEventID, int eventIndex, String gameIdentifier)
     {
         DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
@@ -90,7 +90,7 @@ public class ExcelBuilder
         sportDataSheet.getRow(eventIndex).getCell(26).setCellValue(awaySpreadOddsMap.get(dataEventID));
         sportDataSheet.getRow(eventIndex).createCell(31);//MoneyLine Bet365 away odds, column AF
         sportDataSheet.getRow(eventIndex).getCell(31).setCellStyle(centerStyle);
-        sportDataSheet.getRow(eventIndex).getCell(31).setCellValue(awayMoneyLineOddsMap.get(dataEventID));
+        sportDataSheet.getRow(eventIndex).getCell(31).setCellValue(bet365OddsMap.get(dataEventID));
         sportDataSheet.getRow(eventIndex).createCell(59);
         sportDataSheet.getRow(eventIndex).getCell(59).setCellStyle(myStyle);
         sportDataSheet.getRow(eventIndex).getCell(59).setCellValue(atsHome);
@@ -145,23 +145,6 @@ public class ExcelBuilder
     {
         this.gameIdentifier = gameIdentifier;
     }
-    public void setHomeMLOddsMap(HashMap<String, String> homeMLOddsMap)
-    {
-        this.homeMLOddsMap = homeMLOddsMap;
-    }
-    public void setMoneyLineOdds(String moneyLineOdds, String dataEventId)
-    {
-    }
-    public void setSpreadOdds(String spreadOdds, String dataEventId)
-    {
-        String[] spreadOddsArray = spreadOdds.split(" ");
-        if (spreadOddsArray.length > 0)
-        {
-            awaySpreadOdds = spreadOddsArray[0];
-            awaySpreadOddsMap.put(dataEventId, awayMoneyLineOdds);
-            homeSpreadOdds = spreadOddsArray[1];
-            homeSpreadOddsMap.put(dataEventId, homeMoneyLineOdds);
-        }
-    }
+    public void setBet365OddsMap(HashMap<String, String> awayMoneyLineOddsMap) {this.bet365OddsMap = awayMoneyLineOddsMap;}
 }
 

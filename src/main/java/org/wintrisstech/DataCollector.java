@@ -2,7 +2,7 @@ package org.wintrisstech;
 /*******************************************************************
  * Covers NFL Extraction Tool
  * Copyright 2020 Dan Farris
- * version crazy 220717
+ * version crazy 220717A
  * Builds data event id array and calendar date array
  *******************************************************************/
 import org.jsoup.nodes.Element;
@@ -12,28 +12,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 public class DataCollector
 {
-    private static HashMap<String, String> bet365HomeTeamOdds = new HashMap<>();
-    private static HashMap<String, String> bet365AwayTeamOdds = new HashMap<>();
-    private static HashMap<String, String> bet365Odds = new HashMap<>();
-    private static ArrayList<String> thisWeekMatchuplist = new ArrayList<>();
-    private static ArrayList<String> homeAmericanOddsArray = new ArrayList<>();
-    private static HashMap<String, String> homeAmericanOddsMap = new HashMap<>();
-    private static ArrayList<String> homeDecimalOddsArray = new ArrayList<>();
-    private static HashMap<String, String> homeDecimalOddsMap = new HashMap<>();
-    private static ArrayList<String> homeFractionalOddsArray = new ArrayList<>();
-    private static HashMap<String, String> homeFractionalOddsMap = new HashMap<>();
-    private static ArrayList<String> awayAmericanOddsArray = new ArrayList<>();
-    private static HashMap<String, String> awayAmericanOddsMap = new HashMap<>();
-    private static ArrayList<String> awayDecimalOddsArray = new ArrayList<>();
-    private static HashMap<String, String> awayMLoddsMap = new HashMap<>();
-    private static HashMap<String, String> homeMLoddsMap = new HashMap<>();
-    private static ArrayList<String> awayFractionalOddsArray = new ArrayList<>();
-    private static HashMap<String, String> awayFractionalOddsMap = new HashMap<>();
-    private HashMap<String, String> mlHomeOdds = new HashMap<String, String>();
-    private HashMap<String, String> mlAwayOdds = new HashMap<String, String>();
+    private static HashMap<String, String> bet365OddsMap = new HashMap<>();
     private String dataEventId;
-    private String MLhomeOdds;
-    private String MLawayOdds;
     private String homeTeamNickname;//e.g. Browns...data-home-team-nickname-search
     private String awayTeamNickname;//e.g Texans...data-away-team-nickname-search
     private String awayTeamFullName;//e.g. Cleveland...data-home-team-fullname-search
@@ -66,16 +46,9 @@ public class DataCollector
     private HashMap<String, String> ouUndersMap = new HashMap<>();
     private HashMap<String, String> ouOversMap = new HashMap<>();
     private HashMap<String, String> cityNameMap = new HashMap<>();
-    private HashMap<String, String> idXref = new HashMap<>();
-    private String[] bet365OddsArray = new String[6];
-    ArrayList<String> oddStrings = new ArrayList<>();
-    public HashMap<String, String> getAwayMLoddsMap()
+    public  HashMap<String, String> getBet365OddsMap()
     {
-        return awayMLoddsMap;
-    }
-    public HashMap<String, String> getHomeMLoddsMap()
-    {
-        return awayMLoddsMap;
+        return bet365OddsMap;
     }
     public void collectTeamInfo(Elements weekElements)//From covers.com website for this week's matchups
     {
@@ -145,6 +118,7 @@ public class DataCollector
     public String collectOdds(String dataGame, Elements soupOddsElements)
     {
         String s = soupOddsElements.select("[data-book='WynnBET'][data-game='" + dataGame + "'][data-type='moneyline'] .__awayOdds .American.__american").text();
+        bet365OddsMap.put(dataEventId, s);
         return s;
     }
     public HashMap<String, String> getHomeFullNameMap()
@@ -178,10 +152,6 @@ public class DataCollector
     public HashMap<String, String> getGameIdentifierMap()
     {
         return gameIdentifierMap;
-    }
-    public void setThisSeason(String thisSeason)
-    {
-        this.thisSeason = thisSeason;
     }
     public String getAwayTeamCompleteName()
     {
