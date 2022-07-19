@@ -2,7 +2,7 @@ package org.wintrisstech;
 /*******************************************************************
  * Covers NFL Extraction Tool
  * Copyright 2020 Dan Farris
- * version crazy 220719
+ * version crazy 220719A
  * Builds data event id array and calendar date array
  *******************************************************************/
 import org.jsoup.nodes.Element;
@@ -24,7 +24,6 @@ public class DataCollector
     private String awayTeamScore;
     private String homeTeamScore;
     private String gameDate;
-    private String awayTeamCity;
     private String homeTeamCity;
     private String thisWeek;
     private String thisSeason = "2022";
@@ -43,7 +42,7 @@ public class DataCollector
     private HashMap<String, String> atsAwaysMap = new HashMap<>();
     private HashMap<String, String> ouUndersMap = new HashMap<>();
     private HashMap<String, String> ouOversMap = new HashMap<>();
-    private HashMap<String, String> cityNameMap = new HashMap<>();
+    //private HashMap<String, String> cityNameMap = new HashMap<>();
     public  HashMap<String, String> getBet365OddsMap()
     {
         return bet365OddsMap;
@@ -59,16 +58,15 @@ public class DataCollector
             homeTeamNickname = e.attr("data-home-team-nickname-search");//e.g. Texans
             awayTeamNickname = e.attr("data-away-team-nickname-search");//e.g. Cowboys
             homeTeamCity = e.attr("data-home-team-city-search");
-            homeTeamCity = cityNameMap.get(homeTeamCityName);//To correct for NFL stndard city names
+            homeTeamCity = (homeTeamCityName);//To correct for NFL stndard city names
             homeTeamCityPlusNickName = homeTeamCityName + " " + homeTeamNickname;
             awayTeamCityPlusNickName = awayTeamCityName + " " +  awayTeamNickname;
             System.out.println("mmm " + homeTeamCityPlusNickName);
             System.out.println("000 " + awayTeamCityPlusNickName);
-            awayTeamCity = e.attr("data-away-team-city-search");
-            awayTeamCity = cityNameMap.get(awayTeamCity);
-            awayTeamCityPlusNickName = awayTeamCity + " " + awayTeamNickname;
+            awayTeamCityName = e.attr("data-away-team-city-search");
+            awayTeamCityName = (awayTeamCityName);
+            awayTeamCityPlusNickName = awayTeamCityName + " " + awayTeamNickname;
             gameIdentifier = thisSeason + " - " + awayTeamCityPlusNickName + " @ " + homeTeamCityPlusNickName;
-            System.out.println("^^" + gameIdentifier);
             dataEventId = e.attr("data-event-id");
             String[] gameDateTime = e.attr("data-game-date").split(" ");
             gameDate = gameDateTime[0];

@@ -8,11 +8,11 @@ import java.util.HashMap;
 import java.util.Map;
 /****************************************
  * Crazy Working selenium demo
- * version crazy 220719
+ * version crazy 220719A
  ****************************************/
 public class Main
 {
-    private static final String VERSION = "220719";
+    private static final String VERSION = "220719A";
     private XSSFWorkbook sportDataWorkbook;
     private HashMap<String, String> weekDateMap = new HashMap<>();
     private HashMap<String, String> cityNameMap = new HashMap<>();
@@ -47,7 +47,6 @@ public class Main
         dataCollector.collectTeamInfo(weekElements);
         sportDataWorkbook = excelReader.readSportData();
         org.jsoup.select.Elements soupOddsElements = webSiteReader.readWebsite("https://www.covers.com/sport/football/nfl/odds");
-        ///////////////////////////////////////////////////////////////////////// MAIN LOOP ////////////////////////////////////////////////////////////
         System.out.println("Main69 /////////////////////////////////////// MAIN LOOP ///////////////////////////////////////////////////////////////////////////");
         for (Map.Entry<String, String> entry : xRefMap.entrySet())
         {
@@ -57,7 +56,6 @@ public class Main
             consensusElements = webSiteReader.readWebsite("https://contests.covers.com/consensus/matchupconsensusdetails?externalId=%2fsport%2ffootball%2fcompetition%3a" + dataEventId);
             dataCollector.collectConsensusData(consensusElements, dataEventId);
             excelBuilder.setThisWeekAwayTeamsMap(dataCollector.getAwayFullNameMap());
-            System.out.println(dataCollector.getAwayFullNameMap());
             excelBuilder.setHomeTeamsMap(dataCollector.getHomeFullNameMap());
             excelBuilder.setGameDatesMap(dataCollector.getGameDatesMap());
             excelBuilder.setAtsHomesMap(dataCollector.getAtsHomesMap());
@@ -74,7 +72,6 @@ public class Main
             globalMatchupIndex++;
         }
         System.out.println("Main69 /////////////////////////////////////// END MAIN LOOP ///////////////////////////////////////////////////////////////////////////=> " + loopCounter + " games.");
-        ///////////////////////////////////////////////////////////////////////// END MAIN LOOP ////////////////////////////////////////////////////////////
         excelWriter.openOutputStream();
         excelWriter.writeSportData(sportDataWorkbook);
         excelWriter.closeOutputStream();
