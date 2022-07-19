@@ -2,7 +2,7 @@ package org.wintrisstech;
 /*******************************************************************
  * Covers NFL Extraction Tool
  * Copyright 2020 Dan Farris
- * version crazy 220719A
+ * version crazy 220719B
  *******************************************************************/
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.IndexedColors;
@@ -47,7 +47,8 @@ public class ExcelBuilder
     private String completeAwayTeamName;
     private String gameIdentifier;
     private String dataEventId;
-    private String bet365OddsString;
+    private String bet365AwayOddsString;
+    private String bet365HomeOddsString;
     public XSSFWorkbook buildExcel(XSSFWorkbook sportDataWorkbook, String dataEventId, int eventIndex, String gameIdentifier)
     {
         this.dataEventId = dataEventId;
@@ -86,13 +87,13 @@ public class ExcelBuilder
         sportDataSheet.getRow(eventIndex).getCell(12).setCellValue(homeSpreadOddsMap.get(dataEventId));
         sportDataSheet.getRow(eventIndex).createCell(17);//MoneyLine Bet365 home odds, column R
         sportDataSheet.getRow(eventIndex).getCell(17).setCellStyle(centerStyle);
-        sportDataSheet.getRow(eventIndex).getCell(17).setCellValue(homeMoneyLineOddsMap.get(dataEventId));
+        sportDataSheet.getRow(eventIndex).getCell(17).setCellValue(bet365HomeOddsString);
         sportDataSheet.getRow(eventIndex).createCell(26);//Spread away odds, column AA
         sportDataSheet.getRow(eventIndex).getCell(26).setCellStyle(centerStyle);
         sportDataSheet.getRow(eventIndex).getCell(26).setCellValue(awaySpreadOddsMap.get(dataEventId));
         sportDataSheet.getRow(eventIndex).createCell(31);//MoneyLine Bet365 away odds, column AF
         sportDataSheet.getRow(eventIndex).getCell(31).setCellStyle(centerStyle);
-        sportDataSheet.getRow(eventIndex).getCell(31).setCellValue(bet365OddsString);
+        sportDataSheet.getRow(eventIndex).getCell(31).setCellValue(bet365AwayOddsString);
         sportDataSheet.getRow(eventIndex).createCell(59);
         sportDataSheet.getRow(eventIndex).getCell(59).setCellStyle(myStyle);
         sportDataSheet.getRow(eventIndex).getCell(59).setCellValue(atsHome);
@@ -150,7 +151,7 @@ public class ExcelBuilder
     public void setBet365OddsMap(HashMap<String, String> bet365OddsMap)
     {
         this.bet365OddsMap = bet365OddsMap;
-        bet365OddsString = bet365OddsMap.get(dataEventId);
+        bet365AwayOddsString = bet365OddsMap.get(dataEventId);
     }
 }
 

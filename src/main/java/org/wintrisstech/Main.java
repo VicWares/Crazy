@@ -8,11 +8,11 @@ import java.util.HashMap;
 import java.util.Map;
 /****************************************
  * Crazy Working selenium demo
- * version crazy 220719A
+ * version crazy 220719B
  ****************************************/
 public class Main
 {
-    private static final String VERSION = "220719A";
+    private static final String VERSION = "220719B";
     private XSSFWorkbook sportDataWorkbook;
     private HashMap<String, String> weekDateMap = new HashMap<>();
     private HashMap<String, String> cityNameMap = new HashMap<>();

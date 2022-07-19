@@ -2,7 +2,7 @@ package org.wintrisstech;
 /*******************************************************************
  * Covers NFL Extraction Tool
  * Copyright 2020 Dan Farris
- * version crazy 220719A
+ * version crazy 220719B
  * Builds data event id array and calendar date array
  *******************************************************************/
 import org.jsoup.nodes.Element;
@@ -52,17 +52,13 @@ public class DataCollector
         for (Element e : weekElements)//Build week matchup IDs array
         {
             homeTeamCityName = e.attr("data-home-team-fullname-search");//e.g. Houston
-            System.out.println(":::" + homeTeamCityName);
             awayTeamCityName = e.attr("data-away-team-fullname-search");//e.g. Dallas
-            System.out.println("kkk" + awayTeamCityName);
             homeTeamNickname = e.attr("data-home-team-nickname-search");//e.g. Texans
             awayTeamNickname = e.attr("data-away-team-nickname-search");//e.g. Cowboys
             homeTeamCity = e.attr("data-home-team-city-search");
             homeTeamCity = (homeTeamCityName);//To correct for NFL stndard city names
             homeTeamCityPlusNickName = homeTeamCityName + " " + homeTeamNickname;
             awayTeamCityPlusNickName = awayTeamCityName + " " +  awayTeamNickname;
-            System.out.println("mmm " + homeTeamCityPlusNickName);
-            System.out.println("000 " + awayTeamCityPlusNickName);
             awayTeamCityName = e.attr("data-away-team-city-search");
             awayTeamCityName = (awayTeamCityName);
             awayTeamCityPlusNickName = awayTeamCityName + " " + awayTeamNickname;
@@ -102,7 +98,6 @@ public class DataCollector
         }
         catch (Exception e)
         {
-            System.out.println("DC132 DataCollector, no consensus data");
             ouUnder = "no data";
             ouOver = "no data";
             atsHome = "no data";
@@ -116,6 +111,7 @@ public class DataCollector
     public String collectOdds(String dataGame, Elements soupOddsElements)
     {
         String s = soupOddsElements.select("[data-book='WynnBET'][data-game='" + dataGame + "'][data-type='moneyline'] .__awayOdds .American.__american").text();
+        String s2 = soupOddsElements.select("[data-book='WynnBET'][data-game='" + dataGame + "'][data-type='moneyline'] .__awayOdds .American.__american").text();
         bet365OddsMap.put(dataEventId, s);
         return s;
     }
