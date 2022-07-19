@@ -2,7 +2,7 @@ package org.wintrisstech;
 /*******************************************************************
  * Covers NFL Extraction Tool
  * Copyright 2020 Dan Farris
- * version crazy 220717A
+ * version crazy 220719
  * Builds data event id array and calendar date array
  *******************************************************************/
 import org.jsoup.nodes.Element;
@@ -16,11 +16,11 @@ public class DataCollector
     private String dataEventId;
     private String homeTeamNickname;//e.g. Browns...data-home-team-nickname-search
     private String awayTeamNickname;//e.g Texans...data-away-team-nickname-search
-    private String awayTeamFullName;//e.g. Cleveland...data-home-team-fullname-search
-    private String homeTeamFullName;//e.g Houston...data-home-team-fullname-search
-    private String awayTeamCompleteName;//e.g. Kansas City Chiefs
-    private static String homeTeamCompleteName;//e.g Houston Texans
-    private String gameIdentifier;//e.g 2020 - Houston Texans @ Kansas City Chiefs
+    private String awayTeamCityName;//e.g. Cleveland...data-home-team-fullname-search
+    private String homeTeamCityName;//e.g Houston...data-home-team-fullname-search
+    private String awayTeamCityPlusNickName;//e.g. Kansas City Chiefs
+    private static String homeTeamCityPlusNickName;//e.g Houston Texans
+    private String gameIdentifier;//Column A e.g 2020 - Houston Texans @ Kansas City Chiefs
     private String awayTeamScore;
     private String homeTeamScore;
     private String gameDate;
@@ -39,8 +39,6 @@ public class DataCollector
     private HashMap<String, String> gameIdentifierMap = new HashMap<>();
     private HashMap<String, String> homeFullNameMap = new HashMap<>();
     private HashMap<String, String> awayFullNameMap = new HashMap<>();
-    private HashMap<String, String> homeShortNameMap = new HashMap<>();
-    private HashMap<String, String> awayShortNameMap = new HashMap<>();
     private HashMap<String, String> atsHomesMap = new HashMap<>();
     private HashMap<String, String> atsAwaysMap = new HashMap<>();
     private HashMap<String, String> ouUndersMap = new HashMap<>();
@@ -54,17 +52,23 @@ public class DataCollector
     {
         for (Element e : weekElements)//Build week matchup IDs array
         {
-            homeTeamFullName = e.attr("data-home-team-fullname-search");//e.g. Houston...correcting for different city/name usage
+            homeTeamCityName = e.attr("data-home-team-fullname-search");//e.g. Houston
+            System.out.println(":::" + homeTeamCityName);
+            awayTeamCityName = e.attr("data-away-team-fullname-search");//e.g. Dallas
+            System.out.println("kkk" + awayTeamCityName);
             homeTeamNickname = e.attr("data-home-team-nickname-search");//e.g. Texans
-            homeTeamCity = e.attr("data-home-team-city-search");
-            homeTeamCity = cityNameMap.get(homeTeamCity);
-            homeTeamCompleteName = homeTeamCity + " " + homeTeamNickname;
-            awayTeamFullName = e.attr("data-away-team-fullname-search");//e.g. Dallas
             awayTeamNickname = e.attr("data-away-team-nickname-search");//e.g. Cowboys
+            homeTeamCity = e.attr("data-home-team-city-search");
+            homeTeamCity = cityNameMap.get(homeTeamCityName);//To correct for NFL stndard city names
+            homeTeamCityPlusNickName = homeTeamCityName + " " + homeTeamNickname;
+            awayTeamCityPlusNickName = awayTeamCityName + " " +  awayTeamNickname;
+            System.out.println("mmm " + homeTeamCityPlusNickName);
+            System.out.println("000 " + awayTeamCityPlusNickName);
             awayTeamCity = e.attr("data-away-team-city-search");
             awayTeamCity = cityNameMap.get(awayTeamCity);
-            awayTeamCompleteName = awayTeamCity + " " + awayTeamNickname;
-            gameIdentifier = thisSeason + " - " + awayTeamCompleteName + " @ " + homeTeamCompleteName;
+            awayTeamCityPlusNickName = awayTeamCity + " " + awayTeamNickname;
+            gameIdentifier = thisSeason + " - " + awayTeamCityPlusNickName + " @ " + homeTeamCityPlusNickName;
+            System.out.println("^^" + gameIdentifier);
             dataEventId = e.attr("data-event-id");
             String[] gameDateTime = e.attr("data-game-date").split(" ");
             gameDate = gameDateTime[0];
@@ -73,17 +77,13 @@ public class DataCollector
             thisWeekGameDates.add(gameDate);
             gameDatesMap.put(dataEventId, gameDate);
             gameIdentifierMap.put(dataEventId, gameIdentifier);
-            thisWeekHomeTeams.add(homeTeamCompleteName);
-            thisWeekAwayTeams.add(awayTeamCompleteName);
-            homeFullNameMap.put(dataEventId, homeTeamFullName);
-            awayFullNameMap.put(dataEventId, awayTeamFullName);
+            thisWeekHomeTeams.add(homeTeamCityPlusNickName);
+            thisWeekAwayTeams.add(awayTeamCityPlusNickName);
+            homeFullNameMap.put(dataEventId, homeTeamCityName);
+            awayFullNameMap.put(dataEventId, awayTeamCityName);
             thisWeekHomeTeamScores.add(homeTeamScore);
             thisWeekAwayTeamScores.add((awayTeamScore));
             thisGameWeekNumbers.add(thisWeek);
-            String awayShortName = e.attr("data-away-team-shortname-search");//Away team
-            awayShortNameMap.put(dataEventId, awayShortName);
-            String homeShortName = e.attr("data-home-team-shortname-search");//Home team
-            homeShortNameMap.put(dataEventId, homeShortName);
         }
     }
     public void collectConsensusData(Elements Consensus, String MatchupID)
@@ -153,17 +153,13 @@ public class DataCollector
     {
         return gameIdentifierMap;
     }
-    public String getAwayTeamCompleteName()
+    public String getAwayTeamCityPlusNickName()
     {
-        return awayTeamCompleteName;
+        return awayTeamCityPlusNickName;
     }
     public String getHomeTeamCompleteName()
     {
-        return homeTeamCompleteName;
-    }
-    public void setCityNameMap(HashMap<String, String> cityNameMap)
-    {
-        this.cityNameMap = cityNameMap;
+        return homeTeamCityPlusNickName;
     }
 }
 

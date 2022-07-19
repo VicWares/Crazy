@@ -1,19 +1,18 @@
 package org.wintrisstech;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.jsoup.nodes.Element;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.support.ui.WebDriverWait;
+
 import javax.swing.*;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 /****************************************
  * Crazy Working selenium demo
- * version crazy 220717A
+ * version crazy 220719
  ****************************************/
 public class Main
 {
-    private static final String VERSION = "220717A";
+    private static final String VERSION = "220719";
     private XSSFWorkbook sportDataWorkbook;
     private HashMap<String, String> weekDateMap = new HashMap<>();
     private HashMap<String, String> cityNameMap = new HashMap<>();
@@ -26,8 +25,6 @@ public class Main
     public WebSiteReader websiteReader;
     private org.jsoup.select.Elements consensusElements;
     private int globalMatchupIndex = 3;
-    public static WebDriver driver;
-    public static WebDriverWait wait;
     private int loopCounter;
     private String dataGame;
     public static void main(String[] args) throws IOException, InterruptedException
@@ -46,7 +43,6 @@ public class Main
         org.jsoup.select.Elements nflElements = webSiteReader.readWebsite("https://www.covers.com/sports/nfl/matchups?selectedDate=" + weekDate);//Covers.com "Scores and Matchups" page for this week
         org.jsoup.select.Elements weekElements = nflElements.select(".cmg_game_data, .cmg_matchup_game_box");//Lots of good stuff in this Element: team name, team city...
         xRefMap = buildXref(weekElements);//Key is data-event-ID e.g 87579, Value is data-game e.g 265282, two different ways of selecting the same matchup (game)
-        System.out.println(xRefMap);
         System.out.println("Main66 week number => " + weekNumber + ", week date => " + weekDate + ", " + weekElements.size() + " games this week");
         dataCollector.collectTeamInfo(weekElements);
         sportDataWorkbook = excelReader.readSportData();
@@ -61,6 +57,7 @@ public class Main
             consensusElements = webSiteReader.readWebsite("https://contests.covers.com/consensus/matchupconsensusdetails?externalId=%2fsport%2ffootball%2fcompetition%3a" + dataEventId);
             dataCollector.collectConsensusData(consensusElements, dataEventId);
             excelBuilder.setThisWeekAwayTeamsMap(dataCollector.getAwayFullNameMap());
+            System.out.println(dataCollector.getAwayFullNameMap());
             excelBuilder.setHomeTeamsMap(dataCollector.getHomeFullNameMap());
             excelBuilder.setGameDatesMap(dataCollector.getGameDatesMap());
             excelBuilder.setAtsHomesMap(dataCollector.getAtsHomesMap());
@@ -68,12 +65,12 @@ public class Main
             excelBuilder.setOuOversMap(dataCollector.getOuOversMap());
             excelBuilder.setOuUndersMap(dataCollector.getOuUndersMap());
             excelBuilder.setCompleteHomeTeamName(dataCollector.getHomeTeamCompleteName());
-            excelBuilder.setCompleteAwayTeamName(dataCollector.getAwayTeamCompleteName());
+            excelBuilder.setCompleteAwayTeamName(dataCollector.getAwayTeamCityPlusNickName());
             excelBuilder.setGameIdentifier(dataCollector.getGameIdentifierMap().get(dataEventId));
             excelBuilder.buildExcel(sportDataWorkbook, dataEventId, globalMatchupIndex, dataCollector.getGameIdentifierMap().get(dataEventId));
             String gameOddsString = dataCollector.collectOdds(dataGame, soupOddsElements);
             excelBuilder.setBet365OddsMap(dataCollector.getBet365OddsMap());
-            System.out.println("Main75, data-event-id=> " + dataEventId + ", data-game=> " + dataGame + ", " + " " + dataCollector.getAwayFullNameMap().get(dataEventId) + " vs " + dataCollector.getHomeFullNameMap().get(dataEventId) + " odds => " + gameOddsString);
+            System.out.println("Main74, data-event-id=> " + dataEventId + ", data-game=> " + dataGame + ", " + " " + dataCollector.getAwayFullNameMap().get(dataEventId) + " vs " + dataCollector.getHomeFullNameMap().get(dataEventId) + " odds => " + gameOddsString);
             globalMatchupIndex++;
         }
         System.out.println("Main69 /////////////////////////////////////// END MAIN LOOP ///////////////////////////////////////////////////////////////////////////=> " + loopCounter + " games.");
