@@ -2,7 +2,7 @@ package org.wintrisstech;
 /*******************************************************************
  * Covers NFL Extraction Tool
  * Copyright 2020 Dan Farris
- * version crazy 220720
+ * version crazy 220720A
  * Builds data event id array and calendar date array
  *******************************************************************/
 import org.jsoup.nodes.Element;
@@ -42,10 +42,6 @@ public class DataCollector
     private HashMap<String, String> atsAwaysMap = new HashMap<>();
     private HashMap<String, String> ouUndersMap = new HashMap<>();
     private HashMap<String, String> ouOversMap = new HashMap<>();
-    public  HashMap<String, String> getBet365OddsMap()
-    {
-        return bet365OAwayOddsMap;
-    }
     public void collectTeamInfo(Elements weekElements)//From covers.com website for this week's matchups
     {
         for (Element e : weekElements)//Build week matchup IDs array

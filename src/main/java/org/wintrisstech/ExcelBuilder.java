@@ -2,7 +2,7 @@ package org.wintrisstech;
 /*******************************************************************
  * Covers NFL Extraction Tool
  * Copyright 2020 Dan Farris
- * version crazy 220720
+ * version crazy 220720A
  *******************************************************************/
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.IndexedColors;
@@ -89,7 +89,6 @@ public class ExcelBuilder
         sportDataSheet.getRow(eventIndex).createCell(17);//MoneyLine Bet365 home odds, column R
         sportDataSheet.getRow(eventIndex).getCell(17).setCellStyle(centerStyle);
         sportDataSheet.getRow(eventIndex).getCell(17).setCellValue(bet365HomeOddsString);
-        System.out.println("EB91 " + bet365HomeOddsString);
         sportDataSheet.getRow(eventIndex).createCell(26);//Spread away odds, column AA
         sportDataSheet.getRow(eventIndex).getCell(26).setCellStyle(centerStyle);
         sportDataSheet.getRow(eventIndex).getCell(26).setCellValue(awaySpreadOddsMap.get(dataEventId));
@@ -150,7 +149,11 @@ public class ExcelBuilder
     {
         this.gameIdentifier = gameIdentifier;
     }
-    public void setBet365OddsMap(HashMap<String, String> bet365OddsMap) {this.bet365OddsMap = bet365OddsMap;bet365AwayOddsString = bet365OddsMap.get(dataEventId);
-    }public void setBet365HomeOddsString(String bet365HomeOddsString) {this.bet365HomeOddsString = bet365HomeOddsString;}
+    public void setBet365HomeOddsString(String bet365HomeOddsString)
+    {
+        this.bet365HomeOddsString = bet365HomeOddsString;
+    }
+    public void setBet365AwayOddsString(String bet365AwayOddsString) {this.bet365AwayOddsString = bet365AwayOddsString;}{
+    }
 }
 

@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 /****************************************
  * Crazy Working selenium demo
- * version crazy 220720
+ * version crazy 220720A
  ****************************************/
 public class Main
 {
@@ -23,6 +23,8 @@ public class Main
     private int globalMatchupIndex = 3;
     private int loopCounter;
     private String dataGame;
+    private String bet365AwayOddsString;
+    private String bet365HomeOddsString;
     public static void main(String[] args) throws IOException, InterruptedException
     {
         Main main = new Main();
@@ -61,14 +63,14 @@ public class Main
             excelBuilder.setCompleteAwayTeamName(dataCollector.getAwayTeamCityPlusNickName());
             excelBuilder.setGameIdentifier(dataCollector.getGameIdentifierMap().get(dataEventId));
             excelBuilder.buildExcel(sportDataWorkbook, dataEventId, globalMatchupIndex, dataCollector.getGameIdentifierMap().get(dataEventId));
-            String awayOddsString = dataCollector.collectAwayOdds(dataGame, soupOddsElements);
-            String homeOddsString = dataCollector.collectHomeOdds(dataGame, soupOddsElements);
-            excelBuilder.setBet365OddsMap(dataCollector.getBet365OddsMap());
-            excelBuilder.setBet365HomeOddsString(homeOddsString);
-            System.out.println("Main68, data-event-id=> " + dataEventId + ", data-game=> " + dataGame + ", " + " " + dataCollector.getAwayFullNameMap().get(dataEventId) + " vs " + dataCollector.getHomeFullNameMap().get(dataEventId) + " away, moneyLine, wynnBET odds => " + awayOddsString + " home odds => " + homeOddsString);
+            bet365AwayOddsString = dataCollector.collectAwayOdds(dataGame, soupOddsElements);
+            bet365HomeOddsString = dataCollector.collectHomeOdds(dataGame, soupOddsElements);
+            excelBuilder.setBet365AwayOddsString(bet365AwayOddsString);
+            excelBuilder.setBet365HomeOddsString(bet365HomeOddsString);
+            System.out.println("Main72, data-event-id=> " + dataEventId + ", data-game=> " + dataGame + ", " + " " + dataCollector.getAwayFullNameMap().get(dataEventId) + " vs " + dataCollector.getHomeFullNameMap().get(dataEventId) + " away odds => " + bet365AwayOddsString + " home odds => " + bet365HomeOddsString);
             globalMatchupIndex++;
         }
-        System.out.println("Main71 /////////////////////////////////////// END MAIN LOOP, VERSION #" + VERSION + " ///////////////////////////////////////////////////////////////////////////=> " + loopCounter + " games.");
+        System.out.println("Main74 /////////////////////////////////////// END MAIN LOOP, VERSION #" + VERSION + " ///////////////////////////////////////////////////////////////////////////=> " + loopCounter + " games.");
         excelWriter.openOutputStream();
         excelWriter.writeSportData(sportDataWorkbook);
         excelWriter.closeOutputStream();
