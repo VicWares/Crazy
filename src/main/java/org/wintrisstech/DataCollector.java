@@ -2,17 +2,17 @@ package org.wintrisstech;
 /*******************************************************************
  * Covers NFL Extraction Tool
  * Copyright 2020 Dan Farris
- * version crazy 220719B
+ * version crazy 220720
  * Builds data event id array and calendar date array
  *******************************************************************/
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 public class DataCollector
 {
-    private static HashMap<String, String> bet365OddsMap = new HashMap<>();
+    private static HashMap<String, String> bet365OAwayOddsMap = new HashMap<>();
+    private static HashMap<String, String> bet365OHomeOddsMap = new HashMap<>();
     private String dataEventId;
     private String homeTeamNickname;//e.g. Browns...data-home-team-nickname-search
     private String awayTeamNickname;//e.g Texans...data-away-team-nickname-search
@@ -42,10 +42,9 @@ public class DataCollector
     private HashMap<String, String> atsAwaysMap = new HashMap<>();
     private HashMap<String, String> ouUndersMap = new HashMap<>();
     private HashMap<String, String> ouOversMap = new HashMap<>();
-    //private HashMap<String, String> cityNameMap = new HashMap<>();
     public  HashMap<String, String> getBet365OddsMap()
     {
-        return bet365OddsMap;
+        return bet365OAwayOddsMap;
     }
     public void collectTeamInfo(Elements weekElements)//From covers.com website for this week's matchups
     {
@@ -108,12 +107,17 @@ public class DataCollector
         atsHomesMap.put(MatchupID, atsAway);
         atsAwaysMap.put(MatchupID, atsHome);
     }
-    public String collectOdds(String dataGame, Elements soupOddsElements)
+    public String collectAwayOdds(String dataGame, Elements soupOddsElements)
     {
-        String s = soupOddsElements.select("[data-book='WynnBET'][data-game='" + dataGame + "'][data-type='moneyline'] .__awayOdds .American.__american").text();
-        String s2 = soupOddsElements.select("[data-book='WynnBET'][data-game='" + dataGame + "'][data-type='moneyline'] .__awayOdds .American.__american").text();
-        bet365OddsMap.put(dataEventId, s);
-        return s;
+        String awayOddsString = soupOddsElements.select("[data-book='WynnBET'][data-game='" + dataGame + "'][data-type='moneyline'] .__awayOdds .American.__american").text();
+        String homeOddsString = soupOddsElements.select("[data-book='WynnBET'][data-game='" + dataGame + "'][data-type='moneyline'] .__homeOdds .American.__american").text();
+        bet365OAwayOddsMap.put(dataEventId, awayOddsString);
+        return awayOddsString;
+    }public String collectHomeOdds(String dataGame, Elements soupOddsElements)
+    {
+        String homeOddsString = soupOddsElements.select("[data-book='WynnBET'][data-game='" + dataGame + "'][data-type='moneyline'] .__homeOdds .American.__american").text();
+        bet365OHomeOddsMap.put(dataEventId, homeOddsString);
+        return homeOddsString;
     }
     public HashMap<String, String> getHomeFullNameMap()
     {
