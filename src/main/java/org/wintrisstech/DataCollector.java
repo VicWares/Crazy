@@ -2,7 +2,7 @@ package org.wintrisstech;
 /*******************************************************************
  * Covers NFL Extraction Tool
  * Copyright 2020 Dan Farris
- * version crazy 220720A
+ * version crazy 220720B
  * Builds data event id array and calendar date array
  *******************************************************************/
 import org.jsoup.nodes.Element;
@@ -11,22 +11,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 public class DataCollector
 {
-    private static HashMap<String, String> bet365OAwayOddsMap = new HashMap<>();
-    private static HashMap<String, String> bet365OHomeOddsMap = new HashMap<>();
     private String dataEventId;
-    private String homeTeamNickname;//e.g. Browns...data-home-team-nickname-search
-    private String awayTeamNickname;//e.g Texans...data-away-team-nickname-search
-    private String awayTeamCityName;//e.g. Cleveland...data-home-team-fullname-search
-    private String homeTeamCityName;//e.g Houston...data-home-team-fullname-search
     private String awayTeamCityPlusNickName;//e.g. Kansas City Chiefs
     private static String homeTeamCityPlusNickName;//e.g Houston Texans
-    private String gameIdentifier;//Column A e.g 2020 - Houston Texans @ Kansas City Chiefs
-    private String awayTeamScore;
     private String homeTeamScore;
-    private String gameDate;
-    private String homeTeamCity;
     private String thisWeek;
-    private String thisSeason = "2022";
     private ArrayList<String> thisWeekGameDates = new ArrayList<String>();
     private ArrayList<String> thisGameWeekNumbers = new ArrayList<String>();
     private ArrayList<String> thisWeekHomeTeamScores = new ArrayList<String>();
@@ -46,22 +35,28 @@ public class DataCollector
     {
         for (Element e : weekElements)//Build week matchup IDs array
         {
-            homeTeamCityName = e.attr("data-home-team-fullname-search");//e.g. Houston
-            awayTeamCityName = e.attr("data-away-team-fullname-search");//e.g. Dallas
-            homeTeamNickname = e.attr("data-home-team-nickname-search");//e.g. Texans
-            awayTeamNickname = e.attr("data-away-team-nickname-search");//e.g. Cowboys
-            homeTeamCity = e.attr("data-home-team-city-search");
+            //e.g Houston...data-home-team-fullname-search
+            String homeTeamCityName = e.attr("data-home-team-fullname-search");//e.g. Houston
+            //e.g. Cleveland...data-home-team-fullname-search
+            String awayTeamCityName = e.attr("data-away-team-fullname-search");//e.g. Dallas
+            //e.g. Browns...data-home-team-nickname-search
+            String homeTeamNickname = e.attr("data-home-team-nickname-search");//e.g. Texans
+            //e.g Texans...data-away-team-nickname-search
+            String awayTeamNickname = e.attr("data-away-team-nickname-search");//e.g. Cowboys
+            String homeTeamCity = e.attr("data-home-team-city-search");
             homeTeamCity = (homeTeamCityName);//To correct for NFL stndard city names
             homeTeamCityPlusNickName = homeTeamCityName + " " + homeTeamNickname;
-            awayTeamCityPlusNickName = awayTeamCityName + " " +  awayTeamNickname;
+            awayTeamCityPlusNickName = awayTeamCityName + " " + awayTeamNickname;
             awayTeamCityName = e.attr("data-away-team-city-search");
             awayTeamCityName = (awayTeamCityName);
             awayTeamCityPlusNickName = awayTeamCityName + " " + awayTeamNickname;
-            gameIdentifier = thisSeason + " - " + awayTeamCityPlusNickName + " @ " + homeTeamCityPlusNickName;
+            //Column A e.g 2020 - Houston Texans @ Kansas City Chiefs
+            String thisSeason = "2022";
+            String gameIdentifier = thisSeason + " - " + awayTeamCityPlusNickName + " @ " + homeTeamCityPlusNickName;
             dataEventId = e.attr("data-event-id");
             String[] gameDateTime = e.attr("data-game-date").split(" ");
-            gameDate = gameDateTime[0];
-            awayTeamScore = e.attr("data-away-score");
+            String gameDate = gameDateTime[0];
+            String awayTeamScore = e.attr("data-away-score");
             thisWeek = e.attr("data-competition-type");
             thisWeekGameDates.add(gameDate);
             gameDatesMap.put(dataEventId, gameDate);
@@ -107,12 +102,10 @@ public class DataCollector
     {
         String awayOddsString = soupOddsElements.select("[data-book='WynnBET'][data-game='" + dataGame + "'][data-type='moneyline'] .__awayOdds .American.__american").text();
         String homeOddsString = soupOddsElements.select("[data-book='WynnBET'][data-game='" + dataGame + "'][data-type='moneyline'] .__homeOdds .American.__american").text();
-        bet365OAwayOddsMap.put(dataEventId, awayOddsString);
         return awayOddsString;
     }public String collectHomeOdds(String dataGame, Elements soupOddsElements)
     {
         String homeOddsString = soupOddsElements.select("[data-book='WynnBET'][data-game='" + dataGame + "'][data-type='moneyline'] .__homeOdds .American.__american").text();
-        bet365OHomeOddsMap.put(dataEventId, homeOddsString);
         return homeOddsString;
     }
     public HashMap<String, String> getHomeFullNameMap()

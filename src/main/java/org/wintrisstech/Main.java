@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 /****************************************
  * Crazy Working selenium demo
- * version crazy 220720A
+ * version crazy 220720B
  ****************************************/
 public class Main
 {
@@ -22,15 +22,12 @@ public class Main
     public DataCollector dataCollector = new DataCollector();
     private int globalMatchupIndex = 3;
     private int loopCounter;
-    private String dataGame;
-    private String bet365AwayOddsString;
-    private String bet365HomeOddsString;
-    public static void main(String[] args) throws IOException, InterruptedException
+    public static void main(String[] args) throws IOException
     {
         Main main = new Main();
         main.getGoing();//To get out of static context
     }
-    private void getGoing() throws IOException, InterruptedException
+    private void getGoing() throws IOException
     {
         fillCityNameMap();
         fillWeekNumberMap();
@@ -39,7 +36,7 @@ public class Main
         String weekDate = weekDateMap.get(weekNumber);//Gets week date e.g. 2022-09-08 from week number e.g. 1,2,3,4,...
         org.jsoup.select.Elements nflElements = webSiteReader.readWebsite("https://www.covers.com/sports/nfl/matchups?selectedDate=" + weekDate);//Covers.com "Scores and Matchups" page for this week
         org.jsoup.select.Elements weekElements = nflElements.select(".cmg_game_data, .cmg_matchup_game_box");//Lots of good stuff in this Element: team name, team city...
-        xRefMap = buildXref(weekElements);//Key is data-event-ID e.g 87579, Value is data-game e.g 265282, two different ways of selecting the same matchup (game)
+        xRefMap = buildXref(weekElements);//Key is data-event-ID e.g. 87579, Value is data-game e.g. 265282, two different ways of selecting the same matchup (game)
         System.out.println("Main66 week number => " + weekNumber + ", week date => " + weekDate + ", " + weekElements.size() + " games this week");
         dataCollector.collectTeamInfo(weekElements);
         XSSFWorkbook sportDataWorkbook = excelReader.readSportData();
@@ -49,7 +46,7 @@ public class Main
         {
             loopCounter++;
             String dataEventId = entry.getKey();
-            dataGame = xRefMap.get(dataEventId);
+            String dataGame = xRefMap.get(dataEventId);
             org.jsoup.select.Elements consensusElements = webSiteReader.readWebsite("https://contests.covers.com/consensus/matchupconsensusdetails?externalId=%2fsport%2ffootball%2fcompetition%3a" + dataEventId);
             dataCollector.collectConsensusData(consensusElements, dataEventId);
             excelBuilder.setThisWeekAwayTeamsMap(dataCollector.getAwayFullNameMap());
@@ -63,8 +60,8 @@ public class Main
             excelBuilder.setCompleteAwayTeamName(dataCollector.getAwayTeamCityPlusNickName());
             excelBuilder.setGameIdentifier(dataCollector.getGameIdentifierMap().get(dataEventId));
             excelBuilder.buildExcel(sportDataWorkbook, dataEventId, globalMatchupIndex, dataCollector.getGameIdentifierMap().get(dataEventId));
-            bet365AwayOddsString = dataCollector.collectAwayOdds(dataGame, soupOddsElements);
-            bet365HomeOddsString = dataCollector.collectHomeOdds(dataGame, soupOddsElements);
+            String bet365AwayOddsString = dataCollector.collectAwayOdds(dataGame, soupOddsElements);
+            String bet365HomeOddsString = dataCollector.collectHomeOdds(dataGame, soupOddsElements);
             excelBuilder.setBet365AwayOddsString(bet365AwayOddsString);
             excelBuilder.setBet365HomeOddsString(bet365HomeOddsString);
             System.out.println("Main72, data-event-id=> " + dataEventId + ", data-game=> " + dataGame + ", " + " " + dataCollector.getAwayFullNameMap().get(dataEventId) + " vs " + dataCollector.getHomeFullNameMap().get(dataEventId) + " away odds => " + bet365AwayOddsString + " home odds => " + bet365HomeOddsString);
@@ -82,8 +79,8 @@ public class Main
         for (Element e : weekElements)
         {
             String dataLinkString = e.attr("data-link");
-            String[] dlsa = dataLinkString.split("/");
-            String dataLink = dlsa[5];
+            String[] dataLinkStringArray = dataLinkString.split("/");
+            String dataLink = dataLinkStringArray[5];
             String dataEvent = e.attr("data-event-id");
             xRefMap.put(dataEvent, dataLink);
         }
@@ -120,7 +117,7 @@ public class Main
         cityNameMap.put("Tennessee", "Tennessee");//Tennessee Titans
         cityNameMap.put("Denver", "Denver");//Denver Broncos
         cityNameMap.put("Kansas City", "Kansas City");//Kansas City Chiefs
-        cityNameMap.put("Las Vegas", "Las Vegas");//Los Angeles Chargers and Los angeles Rams
+        cityNameMap.put("Las Vegas", "Las Vegas");//Los Angeles Chargers and Los Angeles Rams
         cityNameMap.put("Philadelphia", "Philadelphia");//Philadelphia Eagles
         cityNameMap.put("Chicago", "Chicago");//Chicago Bears
         cityNameMap.put("Detroit", "Detroit");//Detroit Lions
@@ -153,9 +150,5 @@ public class Main
         weekDateMap.put("17", "2022-12-29");
         weekDateMap.put("18", "2023-01-08");
         weekDateMap.put("19", "2023-02-05");
-    }
-    public WebSiteReader getWebSiteReader()
-    {
-        return webSiteReader;
     }
 }
