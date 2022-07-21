@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 /****************************************
  * Crazy Working selenium demo
- * version crazy 220720B
+ * version crazy 220720C
  ****************************************/
 public class Main
 {
@@ -64,14 +64,14 @@ public class Main
             String bet365HomeOddsString = dataCollector.collectHomeOdds(dataGame, soupOddsElements);
             excelBuilder.setBet365AwayOddsString(bet365AwayOddsString);
             excelBuilder.setBet365HomeOddsString(bet365HomeOddsString);
-            System.out.println("Main72, data-event-id=> " + dataEventId + ", data-game=> " + dataGame + ", " + " " + dataCollector.getAwayFullNameMap().get(dataEventId) + " vs " + dataCollector.getHomeFullNameMap().get(dataEventId) + " away odds => " + bet365AwayOddsString + " home odds => " + bet365HomeOddsString);
+            System.out.println("Main67, data-event-id=> " + dataEventId + ", data-game=> " + dataGame + ", " + " " + dataCollector.getAwayFullNameMap().get(dataEventId) + " vs " + dataCollector.getHomeFullNameMap().get(dataEventId) + " away odds => " + bet365AwayOddsString + " home odds => " + bet365HomeOddsString);
             globalMatchupIndex++;
         }
-        System.out.println("Main74 /////////////////////////////////////// END MAIN LOOP, VERSION #" + VERSION + " ///////////////////////////////////////////////////////////////////////////=> " + loopCounter + " games.");
+        System.out.println("Main70 /////////////////////////////////////// END MAIN LOOP, VERSION #" + VERSION + " ///////////////////////////////////////////////////////////////////////////=> " + loopCounter + " games.");
         excelWriter.openOutputStream();
         excelWriter.writeSportData(sportDataWorkbook);
         excelWriter.closeOutputStream();
-        System.out.println("Main75 Proper Finish...HOORAY!");
+        System.out.println("Main74 Proper Finish...HOORAY!");
     }
 
     public HashMap<String, String> buildXref(org.jsoup.select.Elements weekElements)

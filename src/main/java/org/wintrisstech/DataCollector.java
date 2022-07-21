@@ -2,35 +2,25 @@ package org.wintrisstech;
 /*******************************************************************
  * Covers NFL Extraction Tool
  * Copyright 2020 Dan Farris
- * version crazy 220720B
+ * version crazy 220720C
  * Builds data event id array and calendar date array
  *******************************************************************/
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import java.util.ArrayList;
 import java.util.HashMap;
 public class DataCollector
 {
     private String dataEventId;
     private String awayTeamCityPlusNickName;//e.g. Kansas City Chiefs
-    private static String homeTeamCityPlusNickName;//e.g Houston Texans
-    private String homeTeamScore;
-    private String thisWeek;
-    private ArrayList<String> thisWeekGameDates = new ArrayList<String>();
-    private ArrayList<String> thisGameWeekNumbers = new ArrayList<String>();
-    private ArrayList<String> thisWeekHomeTeamScores = new ArrayList<String>();
-    private ArrayList<String> thisWeekAwayTeamScores = new ArrayList<String>();
-    private ArrayList<String> thisWeekHomeTeams = new ArrayList<String>();
-    private ArrayList<String> atsHomes = new ArrayList<String>();
-    private ArrayList<String> thisWeekAwayTeams = new ArrayList<String>();
-    private HashMap<String, String> gameDatesMap = new HashMap<>();
-    private HashMap<String, String> gameIdentifierMap = new HashMap<>();
-    private HashMap<String, String> homeFullNameMap = new HashMap<>();
-    private HashMap<String, String> awayFullNameMap = new HashMap<>();
-    private HashMap<String, String> atsHomesMap = new HashMap<>();
-    private HashMap<String, String> atsAwaysMap = new HashMap<>();
-    private HashMap<String, String> ouUndersMap = new HashMap<>();
-    private HashMap<String, String> ouOversMap = new HashMap<>();
+    private static String homeTeamCityPlusNickName;//e.g. Houston Texans
+    private final HashMap<String, String> gameDatesMap = new HashMap<>();
+    private final HashMap<String, String> gameIdentifierMap = new HashMap<>();
+    private final HashMap<String, String> homeFullNameMap = new HashMap<>();
+    private final HashMap<String, String> awayFullNameMap = new HashMap<>();
+    private final HashMap<String, String> atsHomesMap = new HashMap<>();
+    private final HashMap<String, String> atsAwaysMap = new HashMap<>();
+    private final HashMap<String, String> ouUndersMap = new HashMap<>();
+    private final HashMap<String, String> ouOversMap = new HashMap<>();
     public void collectTeamInfo(Elements weekElements)//From covers.com website for this week's matchups
     {
         for (Element e : weekElements)//Build week matchup IDs array
@@ -43,40 +33,32 @@ public class DataCollector
             String homeTeamNickname = e.attr("data-home-team-nickname-search");//e.g. Texans
             //e.g Texans...data-away-team-nickname-search
             String awayTeamNickname = e.attr("data-away-team-nickname-search");//e.g. Cowboys
-            String homeTeamCity = e.attr("data-home-team-city-search");
-            homeTeamCity = (homeTeamCityName);//To correct for NFL stndard city names
+            //String homeTeamCity = e.attr("data-home-team-city-search");
+            //homeTeamCity = (homeTeamCityName);//To correct for NFL stndard city names TODO:Fix this
             homeTeamCityPlusNickName = homeTeamCityName + " " + homeTeamNickname;
             awayTeamCityPlusNickName = awayTeamCityName + " " + awayTeamNickname;
             awayTeamCityName = e.attr("data-away-team-city-search");
-            awayTeamCityName = (awayTeamCityName);
+            //awayTeamCityName = (awayTeamCityName);
             awayTeamCityPlusNickName = awayTeamCityName + " " + awayTeamNickname;
-            //Column A e.g 2020 - Houston Texans @ Kansas City Chiefs
+            //Column A e.g. 2020 - Houston Texans @ Kansas City Chiefs
             String thisSeason = "2022";
             String gameIdentifier = thisSeason + " - " + awayTeamCityPlusNickName + " @ " + homeTeamCityPlusNickName;
             dataEventId = e.attr("data-event-id");
             String[] gameDateTime = e.attr("data-game-date").split(" ");
             String gameDate = gameDateTime[0];
-            String awayTeamScore = e.attr("data-away-score");
-            thisWeek = e.attr("data-competition-type");
-            thisWeekGameDates.add(gameDate);
             gameDatesMap.put(dataEventId, gameDate);
             gameIdentifierMap.put(dataEventId, gameIdentifier);
-            thisWeekHomeTeams.add(homeTeamCityPlusNickName);
-            thisWeekAwayTeams.add(awayTeamCityPlusNickName);
             homeFullNameMap.put(dataEventId, homeTeamCityName);
             awayFullNameMap.put(dataEventId, awayTeamCityName);
-            thisWeekHomeTeamScores.add(homeTeamScore);
-            thisWeekAwayTeamScores.add((awayTeamScore));
-            thisGameWeekNumbers.add(thisWeek);
         }
     }
     public void collectConsensusData(Elements Consensus, String MatchupID)
     {
         this.dataEventId = MatchupID;
-        String ouOver = null;
-        String ouUnder = null;
-        String atsHome = null;
-        String atsAway = null;
+        String ouOver;
+        String ouUnder;
+        String atsHome;
+        String atsAway;
         Elements rightConsensus = Consensus.select(".covers-CoversConsensusDetailsTable-finalWagersright");//Home/Under
         Elements leftConsensus = Consensus.select(".covers-CoversConsensusDetailsTable-finalWagersleft");//Away/Over
         try//To catch missing consensus data due to delayed or cancelled game
@@ -101,7 +83,6 @@ public class DataCollector
     public String collectAwayOdds(String dataGame, Elements soupOddsElements)
     {
         String awayOddsString = soupOddsElements.select("[data-book='WynnBET'][data-game='" + dataGame + "'][data-type='moneyline'] .__awayOdds .American.__american").text();
-        String homeOddsString = soupOddsElements.select("[data-book='WynnBET'][data-game='" + dataGame + "'][data-type='moneyline'] .__homeOdds .American.__american").text();
         return awayOddsString;
     }public String collectHomeOdds(String dataGame, Elements soupOddsElements)
     {
