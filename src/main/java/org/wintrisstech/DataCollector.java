@@ -2,11 +2,12 @@ package org.wintrisstech;
 /*******************************************************************
  * Covers NFL Extraction Tool
  * Copyright 2020 Dan Farris
- * version crazy 220720C
+ * version crazy 220721
  * Builds data event id array and calendar date array
  *******************************************************************/
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+
 import java.util.HashMap;
 public class DataCollector
 {
@@ -80,14 +81,26 @@ public class DataCollector
         atsHomesMap.put(MatchupID, atsAway);
         atsAwaysMap.put(MatchupID, atsHome);
     }
-    public String collectAwayOdds(String dataGame, Elements soupOddsElements)
+    public String collectMoneyLineAwayOdds(String dataGame, Elements soupOddsElements)
     {
         String awayOddsString = soupOddsElements.select("[data-book='WynnBET'][data-game='" + dataGame + "'][data-type='moneyline'] .__awayOdds .American.__american").text();
         return awayOddsString;
-    }public String collectHomeOdds(String dataGame, Elements soupOddsElements)
+    }
+    public String collectMoneyLineHomeOdds(String dataGame, Elements soupOddsElements)
     {
         String homeOddsString = soupOddsElements.select("[data-book='WynnBET'][data-game='" + dataGame + "'][data-type='moneyline'] .__homeOdds .American.__american").text();
         return homeOddsString;
+    }
+    public String collectSpreadHomeOdds(String dataGame, Elements soupOddsElements)
+    {
+        String homeSpreadOddsString = soupOddsElements.select("[data-book='WynnBET'][data-game='" + dataGame + "'][data-type='spread'] .__awayOdds .American.__american").text().split(" ")[3];
+        return homeSpreadOddsString;
+    }
+    public String collectSpreadAwayOdds(String dataGame, Elements soupOddsElements)
+    {
+        String awaySpreadOddsString = soupOddsElements.select("[data-book='WynnBET'][data-game='" + dataGame + "'][data-type='spread'] .__awayOdds .American.__american").text().split(" ")[1];
+        System.out.println("DC102 " + awaySpreadOddsString);
+        return awaySpreadOddsString;
     }
     public HashMap<String, String> getHomeFullNameMap()
     {

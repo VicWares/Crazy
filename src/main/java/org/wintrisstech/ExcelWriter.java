@@ -1,19 +1,19 @@
-
 package org.wintrisstech;
 /*******************************************************************
  * Covers NFL Extraction Tool
  * Copyright 2020 Dan Farris
- * version crazy 220720C
+ * version crazy 220721
  * write new NFL Covers data to the large SportData Excel sheet
  *******************************************************************/
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 public class ExcelWriter
 {
-    private String deskTopPath = System.getProperty("user.home") + "/Desktop";/* User's desktop path */
+    private final String deskTopPath = System.getProperty("user.home") + "/Desktop";/* User's desktop path */
     private OutputStream os;
     public void writeSportData(XSSFWorkbook sportDataWorkbook)
     {

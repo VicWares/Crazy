@@ -2,7 +2,7 @@ package org.wintrisstech;
 /*******************************************************************
  * Covers NFL Extraction Tool
  * Copyright 2020 Dan Farris
- * version crazy 220720C
+ * version crazy 220721
  *******************************************************************/
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.IndexedColors;
@@ -10,7 +10,6 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
 import java.awt.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -18,7 +17,7 @@ import java.util.Date;
 import java.util.HashMap;
 public class ExcelBuilder
 {
-    private String thisSeason;
+    private String thisSeason;//TODO:Fix this
     private String ouUnder;
     private String ouOver;
     private String homeTeam;
@@ -31,14 +30,14 @@ public class ExcelBuilder
     private HashMap<String, String> atsAwaysMap = new HashMap<>();
     private HashMap<String, String> ouOversMap;
     private HashMap<String, String> ouUndersMap;
-    private HashMap<String, String> homeMLOddsMap = new HashMap<>();
-    private HashMap<String, String> homeMoneyLineOddsMap = new HashMap<>();
-    private HashMap<String, String> bet365OddsMap = new HashMap<>();
-    private HashMap<String, String> homeSpreadOddsMap = new HashMap<>();
-    private HashMap<String, String> awaySpreadOddsMap = new HashMap<>();
+    private final HashMap<String, String> homeMLOddsMap = new HashMap<>();
+    private final HashMap<String, String> homeMoneyLineOddsMap = new HashMap<>();
+    private final HashMap<String, String> bet365OddsMap = new HashMap<>();
+    private String spreadHomeOddsString;
+    private String spreadAwayOddsString;
     private Sheet sportDataSheet;
-    private XSSFWorkbook sportDataWorkBook = new XSSFWorkbook();
-    private XSSFSheet sportDataUpdateSheet = null;
+    private final XSSFWorkbook sportDataWorkBook = new XSSFWorkbook();
+    private final XSSFSheet sportDataUpdateSheet = null;
     byte[] redColor = new byte[]{(byte) 255, (byte) 0, (byte) 0};
     Color color = new Color(215, 228, 188);
     private String atsHome;
@@ -48,8 +47,10 @@ public class ExcelBuilder
     private String gameIdentifier;
     private String dataEventId;
     private String bet365AwayOddsString;
-    private String bet365HomeOddsString;
+    private String HomeOddsString;
     private String homeOddsString;
+    private String moneyLineHomeOddsString;
+    private String moneyLineAwayOddsString;
     public XSSFWorkbook buildExcel(XSSFWorkbook sportDataWorkbook, String dataEventId, int eventIndex, String gameIdentifier)
     {
         this.dataEventId = dataEventId;
@@ -85,16 +86,16 @@ public class ExcelBuilder
         sportDataSheet.getRow(eventIndex).getCell(2).setCellValue(thisMatchupDate.split("-")[0]);//Column C, season TDDO:Fix this
         sportDataSheet.getRow(eventIndex).createCell(12);//Spread home odds, column M
         sportDataSheet.getRow(eventIndex).getCell(12).setCellStyle(centerStyle);
-        sportDataSheet.getRow(eventIndex).getCell(12).setCellValue(homeSpreadOddsMap.get(dataEventId));
-        sportDataSheet.getRow(eventIndex).createCell(17);//MoneyLine Bet365 home odds, column R
+        sportDataSheet.getRow(eventIndex).getCell(12).setCellValue(spreadHomeOddsString);
+        sportDataSheet.getRow(eventIndex).createCell(17);//MoneyLine home odds, column R
         sportDataSheet.getRow(eventIndex).getCell(17).setCellStyle(centerStyle);
-        sportDataSheet.getRow(eventIndex).getCell(17).setCellValue(bet365HomeOddsString);
+        sportDataSheet.getRow(eventIndex).getCell(17).setCellValue(moneyLineHomeOddsString);
         sportDataSheet.getRow(eventIndex).createCell(26);//Spread away odds, column AA
         sportDataSheet.getRow(eventIndex).getCell(26).setCellStyle(centerStyle);
-        sportDataSheet.getRow(eventIndex).getCell(26).setCellValue(awaySpreadOddsMap.get(dataEventId));
-        sportDataSheet.getRow(eventIndex).createCell(31);//MoneyLine Bet365 away odds, column AF
+        sportDataSheet.getRow(eventIndex).getCell(26).setCellValue(spreadAwayOddsString);
+        sportDataSheet.getRow(eventIndex).createCell(31);//MoneyLine away odds, column AF
         sportDataSheet.getRow(eventIndex).getCell(31).setCellStyle(centerStyle);
-        sportDataSheet.getRow(eventIndex).getCell(31).setCellValue(bet365AwayOddsString);
+        sportDataSheet.getRow(eventIndex).getCell(31).setCellValue(moneyLineAwayOddsString);
         sportDataSheet.getRow(eventIndex).createCell(59);
         sportDataSheet.getRow(eventIndex).getCell(59).setCellStyle(myStyle);
         sportDataSheet.getRow(eventIndex).getCell(59).setCellValue(atsHome);
@@ -149,11 +150,9 @@ public class ExcelBuilder
     {
         this.gameIdentifier = gameIdentifier;
     }
-    public void setBet365HomeOddsString(String bet365HomeOddsString)
-    {
-        this.bet365HomeOddsString = bet365HomeOddsString;
-    }
-    public void setBet365AwayOddsString(String bet365AwayOddsString) {this.bet365AwayOddsString = bet365AwayOddsString;}{
-    }
+    public void setMoneyLineHomeOddsString(String moneyLineHomeOddsString) {this.moneyLineHomeOddsString = moneyLineHomeOddsString;}
+    public void setMoneyLineAwayOddsString(String moneyLineAwayOddsString) {this.moneyLineAwayOddsString = moneyLineAwayOddsString;}
+    public void setSpreadHomeOddsString(String spreadHomeOddsString) {this.spreadHomeOddsString = spreadHomeOddsString;}
+    public void setSpreadAwayOddsString(String spreadAwayOddsString) {this.spreadAwayOddsString = spreadAwayOddsString;}
 }
 
