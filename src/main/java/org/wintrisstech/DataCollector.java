@@ -2,7 +2,7 @@ package org.wintrisstech;
 /*******************************************************************
  * Covers NFL Extraction Tool
  * Copyright 2020 Dan Farris
- * version crazy 220721
+ * version crazy 220801
  * Builds data event id array and calendar date array
  *******************************************************************/
 import org.jsoup.nodes.Element;
@@ -93,14 +93,15 @@ public class DataCollector
     }
     public String collectSpreadHomeOdds(String dataGame, Elements soupOddsElements)
     {
-        String homeSpreadOddsString = soupOddsElements.select("[data-book='WynnBET'][data-game='" + dataGame + "'][data-type='spread'] .__awayOdds .American.__american").text().split(" ")[3];
-        return homeSpreadOddsString;
+        String awaySpreadOddsString = soupOddsElements.select("[data-book='WynnBET'][data-game='" + dataGame + "'][data-type='spread'] .__awayOdds .American.__american").text();
+        String[] split = awaySpreadOddsString.split(" ");
+        return split[2];
     }
     public String collectSpreadAwayOdds(String dataGame, Elements soupOddsElements)
     {
-        String awaySpreadOddsString = soupOddsElements.select("[data-book='WynnBET'][data-game='" + dataGame + "'][data-type='spread'] .__awayOdds .American.__american").text().split(" ")[1];
-        System.out.println("DC102 " + awaySpreadOddsString);
-        return awaySpreadOddsString;
+        String awaySpreadOddsString = soupOddsElements.select("[data-book='WynnBET'][data-game='" + dataGame + "'][data-type='spread'] .__awayOdds .American.__american").text();
+        String[] split = awaySpreadOddsString.split(" ");
+        return split[0];
     }
     public HashMap<String, String> getHomeFullNameMap()
     {

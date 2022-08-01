@@ -2,7 +2,7 @@ package org.wintrisstech;
 /*******************************************************************
  * Covers NFL Extraction Tool
  * Copyright 2020 Dan Farris
- * version crazy 220721
+ * version crazy 220801
  *******************************************************************/
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.IndexedColors;
@@ -84,15 +84,15 @@ public class ExcelBuilder
         sportDataSheet.getRow(eventIndex).createCell(2);
         sportDataSheet.getRow(eventIndex).getCell(2).setCellStyle(centerStyle);
         sportDataSheet.getRow(eventIndex).getCell(2).setCellValue(thisMatchupDate.split("-")[0]);//Column C, season TDDO:Fix this
-        sportDataSheet.getRow(eventIndex).createCell(12);//Spread home odds, column M
-        sportDataSheet.getRow(eventIndex).getCell(12).setCellStyle(centerStyle);
-        sportDataSheet.getRow(eventIndex).getCell(12).setCellValue(spreadHomeOddsString);
+        sportDataSheet.getRow(eventIndex).createCell(13);//Spread home odds, column N/14 Close
+        sportDataSheet.getRow(eventIndex).getCell(13).setCellStyle(centerStyle);
+        sportDataSheet.getRow(eventIndex).getCell(13).setCellValue(spreadHomeOddsString);
         sportDataSheet.getRow(eventIndex).createCell(17);//MoneyLine home odds, column R
         sportDataSheet.getRow(eventIndex).getCell(17).setCellStyle(centerStyle);
         sportDataSheet.getRow(eventIndex).getCell(17).setCellValue(moneyLineHomeOddsString);
-        sportDataSheet.getRow(eventIndex).createCell(26);//Spread away odds, column AA
-        sportDataSheet.getRow(eventIndex).getCell(26).setCellStyle(centerStyle);
-        sportDataSheet.getRow(eventIndex).getCell(26).setCellValue(spreadAwayOddsString);
+        sportDataSheet.getRow(eventIndex).createCell(27);//Spread away odds, column AB/28
+        sportDataSheet.getRow(eventIndex).getCell(27).setCellStyle(centerStyle);
+        sportDataSheet.getRow(eventIndex).getCell(27).setCellValue(spreadAwayOddsString);
         sportDataSheet.getRow(eventIndex).createCell(31);//MoneyLine away odds, column AF
         sportDataSheet.getRow(eventIndex).getCell(31).setCellStyle(centerStyle);
         sportDataSheet.getRow(eventIndex).getCell(31).setCellValue(moneyLineAwayOddsString);
