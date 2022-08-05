@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 /****************************************
  * Crazy Working selenium demo
- * version crazy 220801
+ * version crazy 220805
  ****************************************/
 public class Main
 {
@@ -23,6 +23,8 @@ public class Main
     public DataCollector dataCollector = new DataCollector();
     private int globalMatchupIndex = 3;
     private int loopCounter;
+    private String awayCityPlusNickname;
+
     public static void main(String[] args) throws IOException
     {
         Main main = new Main();
@@ -36,7 +38,7 @@ public class Main
         weekNumber = "1";
         String weekDate = weekDateMap.get(weekNumber);//Gets week date e.g. 2022-09-08 from week number e.g. 1,2,3,4,...
         org.jsoup.select.Elements nflElements = WebSiteReader.readWebsite("https://www.covers.com/sports/nfl/matchups?selectedDate=" + weekDate);//Covers.com "Scores and Matchups" page for this week
-        org.jsoup.select.Elements weekElements = nflElements.select(".cmg_game_data, .cmg_matchup_game_box");//Lots of good stuff in this Element: team name, team city...
+        org.jsoup.select.Elements weekElements = nflElements.select(".cmg_game_data, .cmg_matchup_game_box");//Lots of good stuff in this week Elements: team name, team city...
         xRefMap = buildXref(weekElements);//Key is data-event-ID e.g. 87579, Value is data-game e.g. 265282, two different ways of selecting the same matchup (game)
         System.out.println("Main66 week number => " + weekNumber + ", week date => " + weekDate + ", " + weekElements.size() + " games this week");
         dataCollector.collectTeamInfo(weekElements);
@@ -46,21 +48,20 @@ public class Main
         for (Map.Entry<String, String> entry : xRefMap.entrySet())
         {
             loopCounter++;
-            String dataEventId = entry.getKey();
-            String dataGame = xRefMap.get(dataEventId);
+            String dataEventId = entry.getKey();//e.g. 87581
+            String dataGame = xRefMap.get(dataEventId);//e.g. 265284 Two ways of specifying the same matchup
+            String homeCity = nflElements.attr("data-event-id");
             org.jsoup.select.Elements consensusElements = WebSiteReader.readWebsite("https://contests.covers.com/consensus/matchupconsensusdetails?externalId=%2fsport%2ffootball%2fcompetition%3a" + dataEventId);
             dataCollector.collectConsensusData(consensusElements, dataEventId);
-            excelBuilder.setThisWeekAwayTeamsMap(dataCollector.getAwayFullNameMap());
-            excelBuilder.setHomeTeamsMap(dataCollector.getHomeFullNameMap());
+            excelBuilder.setThisWeekAwayTeamsMap(dataCollector.getAwayCityPlusNicknameMap());
+            excelBuilder.setHomeTeamsMap(dataCollector.getHomeCityPlusNicknameMap());
             excelBuilder.setGameDatesMap(dataCollector.getGameDatesMap());
             excelBuilder.setAtsHomesMap(dataCollector.getAtsHomesMap());
             excelBuilder.setAtsAwaysMap(dataCollector.getAtsAwaysMap());
             excelBuilder.setOuOversMap(dataCollector.getOuOversMap());
             excelBuilder.setOuUndersMap(dataCollector.getOuUndersMap());
-            excelBuilder.setCompleteHomeTeamName(dataCollector.getHomeTeamCompleteName());
-            excelBuilder.setCompleteAwayTeamName(dataCollector.getAwayTeamCityPlusNickName());
+            excelBuilder.setHomeCityName(dataCollector.getHomeCity());
             excelBuilder.setGameIdentifier(dataCollector.getGameIdentifierMap().get(dataEventId));
-            excelBuilder.buildExcel(sportDataWorkbook, dataEventId, globalMatchupIndex, dataCollector.getGameIdentifierMap().get(dataEventId));
             String moneyLineAwayOddsString = dataCollector.collectMoneyLineAwayOdds(dataGame, soupOddsElements);//Bet365 MoneyLine Odds
             String moneyLineHomeOddsString = dataCollector.collectMoneyLineHomeOdds(dataGame, soupOddsElements);
             excelBuilder.setMoneyLineAwayOddsString(moneyLineAwayOddsString);
@@ -69,7 +70,10 @@ public class Main
             String spreadHomeOddsString = dataCollector.collectSpreadHomeOdds(dataGame, soupOddsElements);
             excelBuilder.setSpreadAwayOddsString(spreadAwayOddsString);
             excelBuilder.setSpreadHomeOddsString(spreadHomeOddsString);
-            System.out.println("Main67, data-event-id=> " + dataEventId + ", data-game=> " + dataGame + ", " + " " + dataCollector.getAwayFullNameMap().get(dataEventId) + " vs " + dataCollector.getHomeFullNameMap().get(dataEventId) + " away/home MoneyLine odds => " + moneyLineAwayOddsString + "/" + moneyLineHomeOddsString + " away/home Spread Odds => " + spreadAwayOddsString + "/" + spreadHomeOddsString) ;
+            excelBuilder.buildExcel(sportDataWorkbook, dataEventId, globalMatchupIndex, dataCollector.getGameIdentifierMap().get(dataEventId));
+            System.out.println("Main74, data-event-id=> " + dataEventId + ", data-game=> " + dataGame + ", " + " " + dataCollector.getAwayCityPlusNicknameMap().get(dataEventId) + " vs " + dataCollector.getHomeCityPlusNicknameMap().get(dataEventId) + " away/home MoneyLine odds => " + moneyLineAwayOddsString + "/" + moneyLineHomeOddsString + " away/home Spread Odds => " + spreadAwayOddsString + "/" + spreadHomeOddsString) ;
+            excelBuilder.setHomeCityPlusNickname(dataCollector.getHomeCityPlusNicknameMap().get(dataEventId));
+            excelBuilder.setAwayCityPlusNickname(dataCollector.getAwayCityPlusNicknameMap().get(dataEventId));
             globalMatchupIndex++;
         }
         System.out.println("Main70 /////////////////////////////////////// END MAIN LOOP, VERSION #" + VERSION + " ///////////////////////////////////////////////////////////////////////////=> " + loopCounter + " games.");

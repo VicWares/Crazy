@@ -2,7 +2,7 @@ package org.wintrisstech;
 /*******************************************************************
  * Covers NFL Extraction Tool
  * Copyright 2020 Dan Farris
- * version crazy 220801
+ * version crazy 220805
  *******************************************************************/
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.IndexedColors;
@@ -10,6 +10,8 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.jsoup.select.Elements;
+
 import java.awt.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -42,8 +44,6 @@ public class ExcelBuilder
     Color color = new Color(215, 228, 188);
     private String atsHome;
     private String atsAway;
-    private String completeHomeTeamName;
-    private String completeAwayTeamName;
     private String gameIdentifier;
     private String dataEventId;
     private String bet365AwayOddsString;
@@ -51,6 +51,11 @@ public class ExcelBuilder
     private String homeOddsString;
     private String moneyLineHomeOddsString;
     private String moneyLineAwayOddsString;
+    private String awayCityPlusNickname;
+    private String homeCityPlusNickname;
+    private String homeCityName;
+    private String awayCityName;
+
     public XSSFWorkbook buildExcel(XSSFWorkbook sportDataWorkbook, String dataEventId, int eventIndex, String gameIdentifier)
     {
         this.dataEventId = dataEventId;
@@ -84,12 +89,18 @@ public class ExcelBuilder
         sportDataSheet.getRow(eventIndex).createCell(2);
         sportDataSheet.getRow(eventIndex).getCell(2).setCellStyle(centerStyle);
         sportDataSheet.getRow(eventIndex).getCell(2).setCellValue(thisMatchupDate.split("-")[0]);//Column C, season TDDO:Fix this
+        sportDataSheet.getRow(eventIndex).createCell(10);//Home city plus Nickname e.g. Denver Broncos
+        sportDataSheet.getRow(eventIndex).getCell(10).setCellStyle(centerStyle);
+        sportDataSheet.getRow(eventIndex).getCell(10).setCellValue(homeCityPlusNickname);
         sportDataSheet.getRow(eventIndex).createCell(13);//Spread home odds, column N/14 Close
         sportDataSheet.getRow(eventIndex).getCell(13).setCellStyle(centerStyle);
         sportDataSheet.getRow(eventIndex).getCell(13).setCellValue(spreadHomeOddsString);
         sportDataSheet.getRow(eventIndex).createCell(17);//MoneyLine home odds, column R
         sportDataSheet.getRow(eventIndex).getCell(17).setCellStyle(centerStyle);
         sportDataSheet.getRow(eventIndex).getCell(17).setCellValue(moneyLineHomeOddsString);
+        sportDataSheet.getRow(eventIndex).createCell(24);//Away team combined name e.g Dallas Cowboys
+        sportDataSheet.getRow(eventIndex).getCell(24).setCellStyle(centerStyle);
+        sportDataSheet.getRow(eventIndex).getCell(24).setCellValue(awayCityPlusNickname);
         sportDataSheet.getRow(eventIndex).createCell(27);//Spread away odds, column AB/28
         sportDataSheet.getRow(eventIndex).getCell(27).setCellStyle(centerStyle);
         sportDataSheet.getRow(eventIndex).getCell(27).setCellValue(spreadAwayOddsString);
@@ -114,10 +125,7 @@ public class ExcelBuilder
     {
         this.homeTeamsMap = homeTeamsMap;
     }
-    public void setThisWeekAwayTeamsMap(HashMap<String, String> thisWeekAwayTeamsMap)
-    {
-        this.awayTeamsMap = thisWeekAwayTeamsMap;
-    }
+    public void setThisWeekAwayTeamsMap(HashMap<String, String> thisWeekAwayTeamsMap){this.awayTeamsMap = thisWeekAwayTeamsMap;}
     public void setGameDatesMap(HashMap<String, String> gameDatesMap)
     {
         this.gameDatesMap = gameDatesMap;
@@ -138,14 +146,6 @@ public class ExcelBuilder
     {
         this.ouUndersMap = ouUndersMap;
     }
-    public void setCompleteHomeTeamName(String completeHomeTeamName)
-    {
-        this.completeHomeTeamName = completeHomeTeamName;
-    }
-    public void setCompleteAwayTeamName(String completeAwayTeamName)
-    {
-        this.completeAwayTeamName = completeAwayTeamName;
-    }
     public void setGameIdentifier(String gameIdentifier)
     {
         this.gameIdentifier = gameIdentifier;
@@ -154,5 +154,9 @@ public class ExcelBuilder
     public void setMoneyLineAwayOddsString(String moneyLineAwayOddsString) {this.moneyLineAwayOddsString = moneyLineAwayOddsString;}
     public void setSpreadHomeOddsString(String spreadHomeOddsString) {this.spreadHomeOddsString = spreadHomeOddsString;}
     public void setSpreadAwayOddsString(String spreadAwayOddsString) {this.spreadAwayOddsString = spreadAwayOddsString;}
+    public void setAwayCityPlusNickname(String awayCityPlusNickname) {this.awayCityPlusNickname = awayCityPlusNickname;}
+    public void setHomeCityPlusNickname(String homeCityPlusNickname) {this.homeCityPlusNickname = homeCityPlusNickname;}
+
+    public void setHomeCityName(String homeCity) {this.homeCityName = homeCityName;}
 }
 

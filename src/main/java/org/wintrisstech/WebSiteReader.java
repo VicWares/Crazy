@@ -2,7 +2,7 @@ package org.wintrisstech;
 /*******************************************************************
  * Covers NFL Extraction Tool
  * Copyright 2020 Dan Farris
- * version crazy 220721
+ * version crazy 220805
  * Selenium composite version
  *******************************************************************/
 import org.jsoup.Jsoup;
