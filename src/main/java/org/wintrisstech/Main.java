@@ -23,8 +23,6 @@ public class Main
     public DataCollector dataCollector = new DataCollector();
     private int globalMatchupIndex = 3;
     private int loopCounter;
-    private String awayCityPlusNickname;
-
     public static void main(String[] args) throws IOException
     {
         Main main = new Main();
@@ -44,7 +42,7 @@ public class Main
         dataCollector.collectTeamInfo(weekElements);
         XSSFWorkbook sportDataWorkbook = excelReader.readSportData();
         org.jsoup.select.Elements soupOddsElements = WebSiteReader.readWebsite("https://www.covers.com/sport/football/nfl/odds");
-        System.out.println("Main69 /////////////////////////////////////// MAIN LOOP, VERSION #" + VERSION + " ///////////////////////////////////////////////////////////////////////////");
+        System.out.println("Main69 MAIN LOOP, VERSION #" + VERSION + " MAIN LOOP, VERSION #" + VERSION + " MAIN LOOP, VERSION #" + VERSION + " MAIN LOOP, VERSION #" + VERSION + " MAIN LOOP, VERSION #" + VERSION + "Global Matchup Index => " + globalMatchupIndex);
         for (Map.Entry<String, String> entry : xRefMap.entrySet())
         {
             loopCounter++;
@@ -53,14 +51,13 @@ public class Main
             String homeCity = nflElements.attr("data-event-id");
             org.jsoup.select.Elements consensusElements = WebSiteReader.readWebsite("https://contests.covers.com/consensus/matchupconsensusdetails?externalId=%2fsport%2ffootball%2fcompetition%3a" + dataEventId);
             dataCollector.collectConsensusData(consensusElements, dataEventId);
-            excelBuilder.setThisWeekAwayTeamsMap(dataCollector.getAwayCityPlusNicknameMap());
-            excelBuilder.setHomeTeamsMap(dataCollector.getHomeCityPlusNicknameMap());
+            excelBuilder.setAwayCityPlusNicknameMap(dataCollector.getAwayCityPlusNicknameMap());
+            excelBuilder.setHomeCityPlusNicknameMap(dataCollector.getHomeCityPlusNicknameMap());
             excelBuilder.setGameDatesMap(dataCollector.getGameDatesMap());
             excelBuilder.setAtsHomesMap(dataCollector.getAtsHomesMap());
             excelBuilder.setAtsAwaysMap(dataCollector.getAtsAwaysMap());
             excelBuilder.setOuOversMap(dataCollector.getOuOversMap());
             excelBuilder.setOuUndersMap(dataCollector.getOuUndersMap());
-            excelBuilder.setHomeCityName(dataCollector.getHomeCity());
             excelBuilder.setGameIdentifier(dataCollector.getGameIdentifierMap().get(dataEventId));
             String moneyLineAwayOddsString = dataCollector.collectMoneyLineAwayOdds(dataGame, soupOddsElements);//Bet365 MoneyLine Odds
             String moneyLineHomeOddsString = dataCollector.collectMoneyLineHomeOdds(dataGame, soupOddsElements);

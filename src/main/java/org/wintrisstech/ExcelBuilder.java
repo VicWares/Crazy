@@ -10,7 +10,6 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.jsoup.select.Elements;
 
 import java.awt.*;
 import java.text.DateFormat;
@@ -32,9 +31,6 @@ public class ExcelBuilder
     private HashMap<String, String> atsAwaysMap = new HashMap<>();
     private HashMap<String, String> ouOversMap;
     private HashMap<String, String> ouUndersMap;
-    private final HashMap<String, String> homeMLOddsMap = new HashMap<>();
-    private final HashMap<String, String> homeMoneyLineOddsMap = new HashMap<>();
-    private final HashMap<String, String> bet365OddsMap = new HashMap<>();
     private String spreadHomeOddsString;
     private String spreadAwayOddsString;
     private Sheet sportDataSheet;
@@ -70,7 +66,6 @@ public class ExcelBuilder
         redStyle.setFillForegroundColor(IndexedColors.RED.getIndex());
         sportDataSheet.setDefaultColumnStyle(0, leftStyle);
         sportDataSheet.setDefaultColumnStyle(1, centerStyle);
-        sportDataSheet.createRow(eventIndex);
         sportDataSheet.setColumnWidth(1, 25 * 256);
         homeTeam = homeTeamsMap.get(dataEventId);
         awayTeam = awayTeamsMap.get(dataEventId);
@@ -125,7 +120,7 @@ public class ExcelBuilder
     {
         this.homeTeamsMap = homeTeamsMap;
     }
-    public void setThisWeekAwayTeamsMap(HashMap<String, String> thisWeekAwayTeamsMap){this.awayTeamsMap = thisWeekAwayTeamsMap;}
+    public void setCityPlusNicknameMap(HashMap<String, String> thisWeekAwayTeamsMap){this.awayTeamsMap = thisWeekAwayTeamsMap;}
     public void setGameDatesMap(HashMap<String, String> gameDatesMap)
     {
         this.gameDatesMap = gameDatesMap;
@@ -157,6 +152,12 @@ public class ExcelBuilder
     public void setAwayCityPlusNickname(String awayCityPlusNickname) {this.awayCityPlusNickname = awayCityPlusNickname;}
     public void setHomeCityPlusNickname(String homeCityPlusNickname) {this.homeCityPlusNickname = homeCityPlusNickname;}
 
-    public void setHomeCityName(String homeCity) {this.homeCityName = homeCityName;}
+
+
+    public void setAwayCityPlusNicknameMap(HashMap<String, String> awayCityPlusNicknameMap) {
+    }
+
+    public void setHomeCityPlusNicknameMap(HashMap<String, String> homeCityPlusNicknameMap) {
+    }
 }
 
