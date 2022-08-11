@@ -1,33 +1,35 @@
 package org.wintrisstech;
 /*******************************************************************
- * Covers NFL Extraction Tool
- * Copyright 2020 Dan Farris
- * version crazy 220805
- * Read large SportData excel work book (SportData.xlsx) on user's desktop and return workBook
+ * Crazy Working JSoup
+ * Copyright 2022 Dan Farris
+ * Version crazy 220810
+ * Writes Covers NFL data to a large SportData Excel sheet
  *******************************************************************/
-import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import java.io.FileInputStream;
-import java.io.InputStream;
+import java.io.*;
 public class ExcelReader
 {
-    private final String deskTopPath = "/Users/vicwintriss/Desktop/SportData.xlsx";
-    private XSSFWorkbook sportDataWorkbook;
-    private InputStream is;
+    private final String deskTopPath = System.getProperty("user.home") + "/Desktop/SportDataBackup.xlsx";/* User's desktop path */
+    private XSSFWorkbook sportDataWorkbook = null;
     public XSSFWorkbook readSportData()
     {
-        try
-        {
-            is = new FileInputStream(deskTopPath);
-            //ZipSecureFile.setMinInflateRatio(0);//To prevent zip bomb exception
-            sportDataWorkbook = (XSSFWorkbook) WorkbookFactory.create(is);
-            is.close();
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
+        FileInputStream inFile = null;
+        try {
+            inFile = new FileInputStream(deskTopPath);
+            sportDataWorkbook = new XSSFWorkbook(inFile);
+            inFile.close();
+        } catch (Exception ex) {
+            System.out.println("Error reading  " + inFile + " in ExcelReader20");
         }
         return sportDataWorkbook;
     }
+    public XSSFWorkbook getSportDataWorkbook()
+    {
+        return sportDataWorkbook;
+    }
 }
+
+
+
+

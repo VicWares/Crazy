@@ -1,38 +1,26 @@
 package org.wintrisstech;
 /*******************************************************************
- * Covers NFL Extraction Tool
- * Copyright 2020 Dan Farris
- * version crazy 220805
- * write new NFL Covers data to the large SportData Excel sheet
+ * Crazy Working JSoup
+ * Copyright 2022 Dan Farris
+ * Version crazy 220810
+ * Writes Covers NFL data to a large SportData Excel sheet
  *******************************************************************/
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 public class ExcelWriter
 {
-    private final String deskTopPath = System.getProperty("user.home") + "/Desktop";/* User's desktop path */
-    private OutputStream os;
+    private final String deskTopPath = System.getProperty("user.home") + "/Desktop/SportData.xlsx";/* User's desktop path */
     public void writeSportData(XSSFWorkbook sportDataWorkbook)
     {
-        System.out.println("EW20 Writing to desktop");
-        try
-        {
-            sportDataWorkbook.write(os);
+        FileOutputStream outFile;
+        try {
+            outFile = new FileOutputStream(deskTopPath);
+            sportDataWorkbook.write(outFile);
+            outFile.close();
         }
-        catch (Exception e)
-        {
-            e.printStackTrace();
+        catch (Exception ex) {System.out.println("Bad error writing SportData in ExcelWriter24");
         }
-    }
-    public void closeOutputStream() throws IOException
-    {
-        os.close();
-    }
-    public void openOutputStream() throws FileNotFoundException
-    {
-        os = new FileOutputStream(deskTopPath + "/SportData.xlsx");
     }
 }
+

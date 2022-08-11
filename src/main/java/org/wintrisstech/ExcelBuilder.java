@@ -1,17 +1,15 @@
 package org.wintrisstech;
 /*******************************************************************
- * Covers NFL Extraction Tool
- * Copyright 2020 Dan Farris
- * version crazy 220805
+ * Crazy Working JSoup
+ * Copyright 2022 Dan Farris
+ * Version crazy 220810
+ * Writes Covers NFL data to a large SportData Excel sheet
  *******************************************************************/
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.jsoup.select.Elements;
 
-import java.awt.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -33,11 +31,9 @@ public class ExcelBuilder
     private HashMap<String, String> ouUndersMap;
     private String spreadHomeOddsString;
     private String spreadAwayOddsString;
-    private Sheet sportDataSheet;
-    private final XSSFWorkbook sportDataWorkBook = new XSSFWorkbook();
+    private Sheet SPORT_DATABOOK;
+    private XSSFWorkbook sportDataWorkBook = new XSSFWorkbook();
     private final XSSFSheet sportDataUpdateSheet = null;
-    byte[] redColor = new byte[]{(byte) 255, (byte) 0, (byte) 0};
-    Color color = new Color(215, 228, 188);
     private String atsHome;
     private String atsAway;
     private String gameIdentifier;
@@ -49,78 +45,47 @@ public class ExcelBuilder
     private String moneyLineAwayOddsString;
     private String awayCityPlusNickname;
     private String homeCityPlusNickname;
-    private String homeCityName;
-    private String awayCityName;
-
-    public XSSFWorkbook buildExcel(XSSFWorkbook sportDataWorkbook, String dataEventId, int eventIndex, String gameIdentifier)
+    public void buildExcel(XSSFSheet sportDataSheet, String dataEventId, int eventIndex)
     {
         this.dataEventId = dataEventId;
-        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-        Date date = new Date();
-        String time = (dateFormat.format(date));
-        sportDataSheet = sportDataWorkbook.getSheet("Data");
-        CellStyle leftStyle = sportDataWorkbook.createCellStyle();
-        CellStyle centerStyle = sportDataWorkbook.createCellStyle();
-        CellStyle myStyle = sportDataWorkbook.createCellStyle();
-        XSSFCellStyle redStyle = sportDataWorkbook.createCellStyle();
-        redStyle.setFillForegroundColor(IndexedColors.RED.getIndex());
-        sportDataSheet.setDefaultColumnStyle(0, leftStyle);
-        sportDataSheet.setDefaultColumnStyle(1, centerStyle);
-        sportDataSheet.setColumnWidth(1, 25 * 256);
-        homeTeam = homeTeamsMap.get(dataEventId);
-        awayTeam = awayTeamsMap.get(dataEventId);
-        thisMatchupDate = gameDatesMap.get(dataEventId);
-        atsHome = atsHomesMap.get(dataEventId);
-        atsAway = atsAwaysMap.get(dataEventId);
-        ouOver = ouOversMap.get(dataEventId);
-        ouUnder = ouUndersMap.get(dataEventId);
-        sportDataSheet.getRow(eventIndex).createCell(0);
-        sportDataSheet.getRow(eventIndex).getCell(0).setCellStyle(leftStyle);
-        sportDataSheet.getRow(0).getCell(0).setCellValue(time);
-        sportDataSheet.getRow(eventIndex).getCell(0).setCellValue(gameIdentifier);//Column A e.g. 2021 - Washington Football Team @ Dallas Cowboys
-        sportDataSheet.getRow(eventIndex).createCell(1);
-        sportDataSheet.getRow(eventIndex).getCell(1).setCellStyle(centerStyle);
-        sportDataSheet.getRow(eventIndex).getCell(1).setCellValue(thisMatchupDate);
-        sportDataSheet.getRow(eventIndex).createCell(2);
-        sportDataSheet.getRow(eventIndex).getCell(2).setCellStyle(centerStyle);
-        sportDataSheet.getRow(eventIndex).getCell(2).setCellValue(thisMatchupDate.split("-")[0]);//Column C, season TDDO:Fix this
-        sportDataSheet.getRow(eventIndex).createCell(10);//Home city plus Nickname e.g. Denver Broncos
-        sportDataSheet.getRow(eventIndex).getCell(10).setCellStyle(centerStyle);
-        sportDataSheet.getRow(eventIndex).getCell(10).setCellValue(homeCityPlusNickname);
-        sportDataSheet.getRow(eventIndex).createCell(13);//Spread home odds, column N/14 Close
-        sportDataSheet.getRow(eventIndex).getCell(13).setCellStyle(centerStyle);
-        sportDataSheet.getRow(eventIndex).getCell(13).setCellValue(spreadHomeOddsString);
-        sportDataSheet.getRow(eventIndex).createCell(17);//MoneyLine home odds, column R
-        sportDataSheet.getRow(eventIndex).getCell(17).setCellStyle(centerStyle);
-        sportDataSheet.getRow(eventIndex).getCell(17).setCellValue(moneyLineHomeOddsString);
-        sportDataSheet.getRow(eventIndex).createCell(24);//Away team combined name e.g Dallas Cowboys
-        sportDataSheet.getRow(eventIndex).getCell(24).setCellStyle(centerStyle);
-        sportDataSheet.getRow(eventIndex).getCell(24).setCellValue(awayCityPlusNickname);
-        sportDataSheet.getRow(eventIndex).createCell(27);//Spread away odds, column AB/28
-        sportDataSheet.getRow(eventIndex).getCell(27).setCellStyle(centerStyle);
-        sportDataSheet.getRow(eventIndex).getCell(27).setCellValue(spreadAwayOddsString);
-        sportDataSheet.getRow(eventIndex).createCell(31);//MoneyLine away odds, column AF
-        sportDataSheet.getRow(eventIndex).getCell(31).setCellStyle(centerStyle);
-        sportDataSheet.getRow(eventIndex).getCell(31).setCellValue(moneyLineAwayOddsString);
-        sportDataSheet.getRow(eventIndex).createCell(59);
-        sportDataSheet.getRow(eventIndex).getCell(59).setCellStyle(myStyle);
-        sportDataSheet.getRow(eventIndex).getCell(59).setCellValue(atsHome);
-        sportDataSheet.getRow(eventIndex).createCell(61);
-        sportDataSheet.getRow(eventIndex).getCell(61).setCellStyle(myStyle);
-        sportDataSheet.getRow(eventIndex).getCell(61).setCellValue(atsAway);
-        sportDataSheet.getRow(eventIndex).createCell(64);
-        sportDataSheet.getRow(eventIndex).getCell(64).setCellStyle(myStyle);
-        sportDataSheet.getRow(eventIndex).getCell(64).setCellValue(ouOver);
-        sportDataSheet.getRow(eventIndex).createCell(66);
-        sportDataSheet.getRow(eventIndex).getCell(66).setCellStyle(myStyle);
-        sportDataSheet.getRow(eventIndex).getCell(66).setCellValue(ouUnder);
-        return sportDataWorkbook;
+
+        this.SPORT_DATABOOK.setColumnWidth(1, 25 * 256);
+//        homeTeam = homeTeamsMap.get(dataEventId);
+//        awayTeam = awayTeamsMap.get(dataEventId);
+//        thisMatchupDate = gameDatesMap.get(dataEventId);
+//        atsHome = atsHomesMap.get(dataEventId);
+//        atsAway = atsAwaysMap.get(dataEventId);
+//        ouOver = ouOversMap.get(dataEventId);
+//        ouUnder = ouUndersMap.get(dataEventId);
+        this.SPORT_DATABOOK.getRow(eventIndex).getCell(0).setCellValue(gameIdentifier);//Column A e.g. 2021 - Washington Football Team @ Dallas Cowboys
+        this.SPORT_DATABOOK.getRow(eventIndex).createCell(1);
+        this.SPORT_DATABOOK.getRow(eventIndex).getCell(1).setCellValue(thisMatchupDate);
+        //sportDataSheet.getRow(eventIndex).createCell(2);
+        //sportDataSheet.getRow(eventIndex).getCell(2).setCellStyle(centerStyle);
+        //sportDataSheet.getRow(eventIndex).getCell(2).setCellValue(thisMatchupDate.split("-")[0]);//Column C, season TDDO:Fix this
+        this.SPORT_DATABOOK.getRow(eventIndex).createCell(12);//Home city plus Nickname e.g. Denver Broncos
+        this.SPORT_DATABOOK.getRow(eventIndex).getCell(12).setCellValue(homeCityPlusNickname);
+        this.SPORT_DATABOOK.getRow(eventIndex).createCell(13);//Spread home odds, column N/14 Close
+        this.SPORT_DATABOOK.getRow(eventIndex).getCell(13).setCellValue(spreadHomeOddsString);
+        this.SPORT_DATABOOK.getRow(eventIndex).createCell(28);//Spread away odds, column AB/28
+        this.SPORT_DATABOOK.getRow(eventIndex).getCell(28).setCellValue(spreadAwayOddsString);
+        this.SPORT_DATABOOK.getRow(eventIndex).createCell(59);
+        this.SPORT_DATABOOK.getRow(eventIndex).getCell(59).setCellValue(atsHome);
+        this.SPORT_DATABOOK.getRow(eventIndex).createCell(61);
+        this.SPORT_DATABOOK.getRow(eventIndex).getCell(61).setCellValue(atsAway);
+        this.SPORT_DATABOOK.getRow(eventIndex).createCell(64);
+        this.SPORT_DATABOOK.getRow(eventIndex).getCell(64).setCellValue(ouOver);
+        this.SPORT_DATABOOK.getRow(eventIndex).createCell(66);
+        this.SPORT_DATABOOK.getRow(eventIndex).getCell(66).setCellValue(ouUnder);
     }
     public void setHomeTeamsMap(HashMap<String, String> homeTeamsMap)
     {
         this.homeTeamsMap = homeTeamsMap;
     }
-    public void setCityPlusNicknameMap(HashMap<String, String> thisWeekAwayTeamsMap){this.awayTeamsMap = thisWeekAwayTeamsMap;}
+    public void setCityPlusNicknameMap(HashMap<String, String> thisWeekAwayTeamsMap)
+    {
+        this.awayTeamsMap = thisWeekAwayTeamsMap;
+    }
     public void setGameDatesMap(HashMap<String, String> gameDatesMap)
     {
         this.gameDatesMap = gameDatesMap;
@@ -145,19 +110,43 @@ public class ExcelBuilder
     {
         this.gameIdentifier = gameIdentifier;
     }
-    public void setMoneyLineHomeOddsString(String moneyLineHomeOddsString) {this.moneyLineHomeOddsString = moneyLineHomeOddsString;}
-    public void setMoneyLineAwayOddsString(String moneyLineAwayOddsString) {this.moneyLineAwayOddsString = moneyLineAwayOddsString;}
-    public void setSpreadHomeOddsString(String spreadHomeOddsString) {this.spreadHomeOddsString = spreadHomeOddsString;}
-    public void setSpreadAwayOddsString(String spreadAwayOddsString) {this.spreadAwayOddsString = spreadAwayOddsString;}
-    public void setAwayCityPlusNickname(String awayCityPlusNickname) {this.awayCityPlusNickname = awayCityPlusNickname;}
-    public void setHomeCityPlusNickname(String homeCityPlusNickname) {this.homeCityPlusNickname = homeCityPlusNickname;}
-
-
-
-    public void setAwayCityPlusNicknameMap(HashMap<String, String> awayCityPlusNicknameMap) {
+    public void setMoneyLineHomeOddsString(String moneyLineHomeOddsString)
+    {
+        this.moneyLineHomeOddsString = moneyLineHomeOddsString;
     }
-
-    public void setHomeCityPlusNicknameMap(HashMap<String, String> homeCityPlusNicknameMap) {
+    public void setMoneyLineAwayOddsString(String moneyLineAwayOddsString)
+    {
+        this.moneyLineAwayOddsString = moneyLineAwayOddsString;
+    }
+    public void setSpreadHomeOddsString(String spreadHomeOddsString)
+    {
+        this.spreadHomeOddsString = spreadHomeOddsString;
+    }
+    public void setSpreadAwayOddsString(String spreadAwayOddsString)
+    {
+        this.spreadAwayOddsString = spreadAwayOddsString;
+    }
+    public void buildAwayCityPlusNickname(String dataEventId, Elements weekElements, int rowIndex)//e.g. Kansas City Chiefs
+    {
+        String awayCity = weekElements.attr("data-away-team-fullname-search");//e.g. Dallas
+        String awayNickname = weekElements.attr("data-away-team-nickname-search");//e.g. Cowboys
+        String awayCityPlusNickname = awayCity + " " + awayNickname;
+           try
+           {
+               sportDataWorkBook.getSheet("Data").createRow(rowIndex).createCell(25);//Away team combined name e.g Dallas Cowboys
+               sportDataWorkBook.getSheet("Data").getRow(rowIndex).getCell(25).setCellValue(awayCityPlusNickname);//Away team combined name e.g Dallas Cowboys
+           } catch (Exception e) {
+               System.out.println("EB138 can't put awayCityPlusNickname in cell(25)");
+           }
+    }
+    public XSSFWorkbook get(XSSFWorkbook sportDataWorkbook) {return sportDataWorkbook;}
+    public void setSportDataWorkbook(XSSFWorkbook sportDataWorkbook) {this.sportDataWorkBook = sportDataWorkbook;}
+    public void buildTimeStamp()
+    {
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        Date date = new Date();
+        String time = (dateFormat.format(date));
+        sportDataWorkBook.getSheet("Data").getRow(0).getCell(0).setCellValue(time);
     }
 }
 

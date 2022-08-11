@@ -1,9 +1,9 @@
 package org.wintrisstech;
 /*******************************************************************
- * Covers NFL Extraction Tool
- * Copyright 2020 Dan Farris
- * version crazy 220805
- * Builds data event id array and calendar date array
+ * Crazy Working JSoup
+ * Copyright 2022 Dan Farris
+ * Version crazy 220810
+ * Writes Covers NFL data to a large SportData Excel sheet
  *******************************************************************/
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -11,15 +11,14 @@ import org.jsoup.select.Elements;
 import java.util.HashMap;
 public class DataCollector
 {
+    public String collectHomeCityPlusNickname;
     private String dataEventId;
     private String awayCity;//e.g Seattle
     private String homeCity;//e.g.Dallas
-    private String awayCityPlusNickname;//e.g. Kansas City Chiefs
+    private String awayCityPlusNickname;
     private String homeCityPlusNickname;//e.g. Houston Texans
     private final HashMap<String, String> gameDatesMap = new HashMap<>();
     private final HashMap<String, String> gameIdentifierMap = new HashMap<>();
-    private final HashMap<String, String> homeCityPlusNicknameMap = new HashMap<>();
-    private final HashMap<String, String> awayCityPlusNicknameMap = new HashMap<>();
     private final HashMap<String, String> atsHomesMap = new HashMap<>();
     private final HashMap<String, String> atsAwaysMap = new HashMap<>();
     private final HashMap<String, String> ouUndersMap = new HashMap<>();
@@ -27,11 +26,12 @@ public class DataCollector
     private Elements weekElements;
     private String awayNickname;
     private String homeNickname;
-    private String awayCityPlusNicknme;
-    public void collectTeamInfo(Elements weekElements)//From covers.com website for this week's matchups
+    private String gameIdentifier;
+    public void collectHomeCityPlusNickname(String dataGame, Elements weekElements)//From covers.com website for this week's matchups
     {
         String thisSeason = "2022";
         this.weekElements = weekElements;
+        String homeCityPlusNickname = weekElements.select("[data-game='" + dataGame + "'][data-type='spread'] .__awayOdds .American.__american").text();
         for (Element e : weekElements) {
             dataEventId = e.attr("data-event-id");
             homeCity = e.attr("data-home-team-fullname-search");//e.g. Houston
@@ -40,15 +40,19 @@ public class DataCollector
             awayNickname = e.attr("data-away-team-nickname-search");//e.g. Cowboys
             homeCityPlusNickname = homeCity + " " + homeNickname;
             awayCityPlusNickname = awayCity + " " + awayNickname;
-            homeCityPlusNicknameMap.put(dataEventId, homeCityPlusNickname);
-            awayCityPlusNicknameMap.put(dataEventId, awayCityPlusNickname);
             //homeCity = (homeTeamCityName);//To correct for NFL stndard city names TODO:Fix this
-            String gameIdentifier = thisSeason + " - " + awayCityPlusNickname + " @ " + homeCityPlusNickname;//Column A e.g. 2020 - Houston Texans @ Kansas City Chiefs
+            gameIdentifier = thisSeason + " - " + awayCityPlusNickname + " @ " + homeCityPlusNickname;//Column A e.g. 2020 - Houston Texans @ Kansas City Chiefs
             gameIdentifierMap.put(dataEventId, gameIdentifier);
+            gameIdentifierMap.put(gameIdentifier, dataEventId);
             String[] gameDateTime = e.attr("data-game-date").split(" ");
             String gameDate = gameDateTime[0];
             gameDatesMap.put(dataEventId, gameDate);
         }
+    }
+    private String collectHomeCityPlusNickname()
+    {
+        String homeCityNamePlusNickname = "homeCity";
+        return homeCityNamePlusNickname;
     }
     public void collectConsensusData(Elements Consensus, String MatchupID)
     {
@@ -76,35 +80,16 @@ public class DataCollector
         atsHomesMap.put(MatchupID, atsAway);
         atsAwaysMap.put(MatchupID, atsHome);
     }
-    public String collectMoneyLineAwayOdds(String dataGame, Elements soupOddsElements)
-    {
-        String awayOddsString = soupOddsElements.select("[data-book='WynnBET'][data-game='" + dataGame + "'][data-type='moneyline'] .__awayOdds .American.__american").text();
-        return awayOddsString;
-    }
-    public String collectMoneyLineHomeOdds(String dataGame, Elements soupOddsElements)
-    {
-        String homeOddsString = soupOddsElements.select("[data-book='WynnBET'][data-game='" + dataGame + "'][data-type='moneyline'] .__homeOdds .American.__american").text();
-        return homeOddsString;
-    }
     public String collectSpreadHomeOdds(String dataGame, Elements soupOddsElements)
     {
-        String homeSpreadOddsString = soupOddsElements.select("[data-book='WynnBET'][data-game='" + dataGame + "'][data-type='spread'] .__homeOdds .American.__american").text();
-        String[] split = homeSpreadOddsString.split(" ");
+        String spreadHomeOddsString = soupOddsElements.select("[data-book='bet365'][data-game='" + dataGame + "'][data-type='spread'] .__homeOdds .American.__american").text();
+        String[] split = spreadHomeOddsString.split(" ");
         return split[0];
     }
     public String collectSpreadAwayOdds(String dataGame, Elements soupOddsElements)
     {
-        String awaySpreadOddsString = soupOddsElements.select("[data-book='WynnBET'][data-game='" + dataGame + "'][data-type='spread'] .__awayOdds .American.__american").text();
-        String[] split = awaySpreadOddsString.split(" ");
-        return split[0];
-    }
-    public HashMap<String, String> getHomeCityPlusNicknameMap()
-    {
-        return homeCityPlusNicknameMap;
-    }
-    public HashMap<String, String> getAwayCityPlusNicknameMap()
-    {
-        return awayCityPlusNicknameMap;
+        String spreadAwayOddsString = soupOddsElements.select("[data-book='bet365'][data-game='" + dataGame + "'][data-type='spread'] .__awayOdds .American.__american").text();
+        return spreadAwayOddsString.split(" ")[0];
     }
     public HashMap<String, String> getGameDatesMap()
     {
@@ -126,10 +111,6 @@ public class DataCollector
     {
         return ouUndersMap;
     }
-    public HashMap<String, String> getGameIdentifierMap()
-    {
-        return gameIdentifierMap;
-    }//e.g. 2022 - Jacksonville Jaguars @ Washington Commanders
 }
 
 
