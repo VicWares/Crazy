@@ -1,9 +1,9 @@
 package org.wintrisstech;
 /*******************************************************************
- * Covers NFL Extraction Tool
- * Copyright 2020 Dan Farris
- * version crazy 220805
- * Selenium composite version
+ * Crazy Working JSoup
+ * Copyright 2022 Dan Farris
+ * Version crazy 220810
+ * Writes Covers NFL data to a large SportData Excel sheet
  *******************************************************************/
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;

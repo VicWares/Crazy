@@ -49,11 +49,6 @@ public class DataCollector
             gameDatesMap.put(dataEventId, gameDate);
         }
     }
-    private String collectHomeCityPlusNickname()
-    {
-        String homeCityNamePlusNickname = "homeCity";
-        return homeCityNamePlusNickname;
-    }
     public void collectConsensusData(Elements Consensus, String MatchupID)
     {
         this.dataEventId = MatchupID;

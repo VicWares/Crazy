@@ -2,73 +2,96 @@ package org.wintrisstech;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
 import javax.swing.*;
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
-/****************************************
- * Crazy Working JSoup
+/*********************************************************
  * Copyright 2022 Dan Farris
- * Version crazy 220810
- * Writes Covers NFL data to a large SportData Excel sheet
- ****************************************/
+ * Version NewCovers 220812
+ * Writes Covers NFL data to SportData Excel sheet
+ *********************************************************/
 public class Main
 {
     public static final String VERSION = "220807";
-    public  XSSFWorkbook SportData = new XSSFWorkbook();
-    public XSSFSheet sportDataSheet = SportData.getSheet("Data");
+    private static XSSFWorkbook sportDataWorkbook = new XSSFWorkbook();
     private final HashMap<String, String> weekDateMap = new HashMap<>();
     private final HashMap<String, String> cityNameMap = new HashMap<>();
     private HashMap<String, String> xRefMap = new HashMap<>();
     public ExcelBuilder excelBuilder = new ExcelBuilder();
     public ExcelWriter excelWriter = new ExcelWriter();
     public ExcelReader excelReader = new ExcelReader();
-    public DataCollector dataCollector = new DataCollector();
     private int rowIndex = 3;
+    public XSSFSheet sportDataSheet;
+    private String weekNumber = "1";//For testinbg
+    private String weekDate;
+    private Elements nflElements;
     public static void main(String[] args) throws IOException
     {
         Main main = new Main();
         main.getGoing();//To get out of static context
     }
+    public static XSSFWorkbook getSportDataWorkbook()
+    {
+        return sportDataWorkbook;
+    }
+    public static void setSportDataWorkbook(XSSFWorkbook sportDataWorkbook)
+    {
+        Main.sportDataWorkbook = sportDataWorkbook;
+    }
     private void getGoing() throws IOException
     {
-        buildCityNameMap();
-        buildWeekNumberMap();
-        String weekNumber = JOptionPane.showInputDialog("Enter NFL week number, e. g. 2");
-        weekNumber = "1";
-        String weekDate = weekDateMap.get(weekNumber);//Gets week date e.g. 2022-09-08 from week number e.g. 1,2,3,4,...
-        org.jsoup.select.Elements nflElements = WebSiteReader.readWebsite("https://www.covers.com/sports/nfl/matchups?selectedDate=" + weekDate);//Covers.com "Scores and Matchups" page for this week
+        buildCityAndWeekNumberMaps();
+        weekNumber = JOptionPane.showInputDialog("Enter NFL week number, e. g. 2");//Get input from user
+        weekNumber = "1"; //for testing
+        nflElements = WebSiteReader.readWebsite("https://www.covers.com/sports/nfl/matchups?selectedDate=" + weekDate);//Covers.com "Scores and Matchups" page for this week
         org.jsoup.select.Elements soupOddsElements = WebSiteReader.readWebsite("https://www.covers.com/sport/football/nfl/odds");
-        org.jsoup.select.Elements weekElements = nflElements.select(".cmg_game_data, .cmg_matchup_game_box");//Lots of good stuff in this week Elements: team name, team city...
-        xRefMap = buildXref(weekElements);//Key is data-event-ID e.g. 87579, Value is data-game e.g. 265282, two different ways of selecting the same matchup (game)
-        System.out.println("Main43 week number => " + weekNumber + ", week date => " + weekDate + ", " + weekElements.size() + " games this week");
-        XSSFWorkbook sportDataWorkbook = excelReader.readSportData();//from Deskto/SportDataBackup.xlsx
+        xRefMap = buildXrefMap(nflElements);//Key is data-event-ID e.g. 87579, Value is data-game e.g. 265282, two different ways of selecting the same matchup (game)
+        System.out.println("Main45 week number => " + weekNumber + ", week date => " + weekDate + ", " + xRefMap.size() + " games this week");
+        sportDataWorkbook = excelReader.readSportData();
         excelBuilder.setSportDataWorkbook(sportDataWorkbook);
-        excelBuilder.buildTimeStamp();//Cell(0), row(0)
-        System.out.println("Main44 ///////////////////////MAIN LOOP, VERSION #" + VERSION + " MAIN LOOP, VERSION #" + VERSION + " MAIN LOOP, VERSION #" + VERSION + " MAIN LOOP, VERSION #" + VERSION + " MAIN LOOP, VERSION #" + VERSION);
+        System.out.println("Main56.");
+        excelBuilder.setSportDataSheet(sportDataSheet);
+        System.out.println("Main47>>>>>>>>>>>>>>>>>>>>>>>>>START MAIN LOOP, VERSION #" + VERSION  + ".......... MAIN LOOP, WEEK DATE " + weekDate + "........... MAIN LOOP, Games This Week " + nflElements.size()+ "........... MAIN LOOP, VERSION #" + VERSION + "...................");
+        excelBuilder.buildTimeStamp(sportDataWorkbook);//Cell(0), row(0)
         for (Map.Entry<String, String> entry : xRefMap.entrySet())//Loop through all matchups this week
         {
             String dataEventId = entry.getKey();//e.g. 87581
             String dataGame = xRefMap.get(dataEventId);//e.g. 265284 Two ways of specifying the same matchup
-            org.jsoup.select.Elements consensusElements = WebSiteReader.readWebsite("https://contests.covers.com/consensus/matchupconsensusdetails?externalId=%2fsport%2ffootball%2fcompetition%3a" + dataEventId);
-            excelBuilder.buildAwayCityPlusNickname(dataEventId, weekElements, rowIndex);//Column 25
-            System.out.println("Main52, data-event-id=> " + dataEventId + " data-game=> " + dataGame);//+ ", " + " away/home Spread Odds => " + spreadAwayOddsString + "/" + spreadHomeOddsString) ;
+            sportDataWorkbook = excelReader.readSportData();
+            excelBuilder.buildHomeCityNname(sportDataWorkbook, dataEventId, nflElements, rowIndex);
+            excelWriter.writeSportData(sportDataWorkbook);
+            sportDataWorkbook = excelReader.readSportData();
+            excelBuilder.buildAwayCityNname(sportDataWorkbook, dataEventId, nflElements, rowIndex);
+            excelWriter.writeSportData(sportDataWorkbook);
+
+            //org.jsoup.select.Elements consensusElements = WebSiteReader.readWebsite("https://contests.covers.com/consensus/matchupconsensusdetails?externalId=%2fsport%2ffootball%2fcompetition%3a" + dataEventId);
+            //excelBuilder.buildHomeCityNname(dataEventId, nflElements, rowIndex);//Column K...11
+            //excelBuilder.buildAwayCityNname(dataEventId, nflElements, rowIndex);//Column Z...26
             rowIndex++;
+            System.out.println("data-event-id => " + dataEventId + " data-game => " + dataGame);
         }
-        System.out.println("Main70 /////////////////////////////////////// END MAIN LOOP, VERSION #" + VERSION + " ///////////////////////////////////////////////////////////////////////////=> " + "??" + " games.");
-        sportDataWorkbook = excelBuilder.get(sportDataWorkbook);
-        excelWriter.writeSportData(sportDataWorkbook);//Writes to Desktop/SportData.xlsx
-        System.out.println("Main74 Proper Finish...HOORAY");
+        excelWriter.writeSportData(excelBuilder.getSportDataWorkbook());//Writes updated SportData.xlsx file to Desktop/SportData.xlsx
+        System.out.println("Main59>>>>>>>>>>>>>>>>>>>>>>>>> END MAIN LOOP, VERSION #" + VERSION + " END MAIN LOOP, VERSION #" + VERSION + ".......... END MAIN LOOP, VERSION #" + VERSION + "........... END MAIN LOOP, VERSION #" + VERSION + "...................\n");
+        System.out.println("Main61 Proper Finish...HOORAY");
     }
-    public HashMap<String, String> buildXref(org.jsoup.select.Elements weekElements)
+    private void buildCityAndWeekNumberMaps()
     {
-        for (Element e : weekElements)
+        buildCityNameMap();
+        buildWeekNumberMap();
+        weekDate = weekDateMap.get(weekNumber);//Gets week date e.g. 2022-09-08 from week number e.g. 1,2,3,4,...
+    }
+    public HashMap<String, String> buildXrefMap(org.jsoup.select.Elements nflElements)//Cross refernces data-event-id (e.g.87585) and data-game (e.g. 265288)...two ways of identifying matchups
+    {
+        Elements matchupElements = nflElements.select(".cmg_game_data.cmg_matchup_game_box");
+        for (Element e : matchupElements)
         {
-            String dataLinkString = e.attr("data-link");
-            String[] dataLinkStringArray = dataLinkString.split("/");
-            String dataLink = dataLinkStringArray[5];
-            String dataEvent = e.attr("data-event-id");
-            xRefMap.put(dataEvent, dataLink);
+            String dataEventId = e.attr("data-event-id");
+            String dataGame[] = e.attr("data-link").split("/");
+            String dataGameString = dataGame[5];
+            xRefMap.put(dataEventId, dataGameString);
         }
         return xRefMap;
     }

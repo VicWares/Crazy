@@ -2,8 +2,8 @@ package org.wintrisstech;
 /*******************************************************************
  * Crazy Working JSoup
  * Copyright 2022 Dan Farris
- * Version crazy 220810
- * Writes Covers NFL data to a large SportData Excel sheet
+ * Version NewCovers 220812
+ * Writes Covers NFL data to SportData Excel sheet
  *******************************************************************/
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
